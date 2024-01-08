@@ -3,6 +3,8 @@ from flask import Flask, request, render_template
 from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
+from lib.account import *
+
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -11,6 +13,24 @@ app = Flask(__name__)
 load_dotenv()
 db_username = os.getenv('DB_USERNAME')
 print(db_username)
+
+# Create new database instance
+db = PostgresqlDatabase(
+    'makersbnb-red-team',  # Your database name
+    user=db_username,  # Your PostgreSQL username
+    password='',  # Your PostgreSQL password
+    host='localhost'  # Your PostgreSQL host
+)
+
+# Initialize the database connection in the Flask app context
+@app.before_request
+def before_request():
+    db.connect()
+
+@app.after_request
+def after_request(response):
+    db.close()
+    return response
 
 # == Your Routes Here ==
 
