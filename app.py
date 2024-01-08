@@ -1,9 +1,16 @@
 import os
 from flask import Flask, request, render_template
 from lib.database_connection import get_flask_database_connection
+from dotenv import load_dotenv
+from peewee import *
 
 # Create a new Flask app
 app = Flask(__name__)
+
+# Environment variables
+load_dotenv()
+db_username = os.getenv('DB_USERNAME')
+print(db_username)
 
 # == Your Routes Here ==
 
