@@ -1,14 +1,17 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, session, url_for
 from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
 from lib.account import *
+from datetime import timedelta
 from lib.listing import *
 
 
 # Create a new Flask app
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'a7sk21'
+app.permanent_session_lifetime = timedelta(minutes=120)
 
 # Environment variables
 load_dotenv()
@@ -42,7 +45,43 @@ def after_request(response):
 @app.route('/', methods=['GET'])
 def get_index():
     listings = Listing.select()
-    return render_template('index.html', listings=listings)
+    return render_template('index.html', account=session.get('username'), listings=listings)
+
+@app.route('/login', methods=['GET'])
+def get_login():
+    if session.get('username') != None:
+        return redirect('/')
+    else:
+        return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def post_login():
+    email = request.form['email']
+    password = request.form['password']
+    try:
+        accounts = Account.select().where(Account.email == email)
+        if accounts.exists(): 
+            if password == accounts[0].password:
+                account = accounts[0]
+                session.permanent = True
+                session['username'] = account.username
+                return redirect('/')
+            else:
+                error_message = "Incorrect password. Please try again."
+        else:
+            error_message = "User not found. Please check your email."
+    except Account.DoesNotExist:
+        error_message = "An error occurred during login. Please try again."
+
+    # Pass the error message to the template and render the login page
+    return render_template('login.html', error=error_message)
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    # Clear the user_id from the session
+    session.pop('username', None)
+    return redirect('/')
+
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database

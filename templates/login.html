@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>MakersBnb</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <h1>Log In</h1>
+
+        <!-- This creates a form that will submit to POST /login -->
+        <form action="/login" method="post">
+
+            <!-- We check to see if there are any errors from a previous submission -->
+            {% if error %}
+                <p class="t-errors">
+                    {{ error }}
+                </p>
+            {% endif %}
+
+            <p>
+                <label for="email">Email</label>
+                <input type="text" name="email" id="email">
+            </p>
+            <p>
+                <label for="password">Password</label>
+                <input type="text" name="password" id="password">
+            </p>
+            <p>
+                <!-- `type` is submit here, to indicate it is a button -->
+                <!-- `value` is used as the button's text -->
+                <input type="submit" value="Log On">
+            </p>
+        </form>
+
+
+
+        <!-- Link back to the homepage. -->
+        <!-- The browser will send `GET /` when the user clicks this -->
+        <a href="/">Back to All Listings</a>
+    </body>
+</html>
