@@ -82,6 +82,10 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
+@app.route('/add_space')
+def add_space():
+    return render_template('add_listing.html')
+
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database

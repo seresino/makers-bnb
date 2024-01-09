@@ -93,3 +93,14 @@ def test_listing_on_index_page(db_connection, page, test_web_address):
 
 
 
+# '''
+# After logging in, can create a listing
+# And listing is added to the databse, and shown on home page listings
+# '''
+# def test_add_listing(db_connection, page, test_web_address):
+#     db_connection.seed("seeds/makersbnb-red-team.sql")
+#     page.goto(f"http://{test_web_address}/")
+#     page.fill("input[name='email']", "johndoe@example.com")
+#     page.fill("input[name='password']", "password123")
+#     page.click("input[type='submit']")
+
