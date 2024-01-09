@@ -82,26 +82,27 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
-@app.route('/add_space')
+@app.route('/add-space')
 def add_space():
     return render_template('add_listing.html')
 
 @app.route('/', methods=['POST'])
 def post_listing():
-
-    name = request.form['name']
-    address = request.form['address']
-    description = request.form['description']
-    price = request.form['price']
-    
-    listing = Listing(name=name, address=address, description=description, price=price)
-    listing.save()
-
-    session.permanent = True
-    session['username'] = listing.account.username
-    listings = Listing.select()
-    return render_template('index.html')
-    # return redirect(f"/{listing.id}")
+    if 'username' not in session:
+        return redirect('login.html')
+    else:
+        logged_in_user = session['username']
+        person = Account.select().where(Account.username==logged_in_user)
+        name = request.form['name']
+        address = request.form['address']
+        description = request.form['description']
+        price = request.form['price']
+        # person = Account.get(Account.username==session.get('username'))
+        listing = Listing(name=name, address=address, description=description, price=price, account_id=person.id)
+        listing.save()
+        listings = Listing.select()
+        return render_template('index.html', listings=listings)
+    # return redirect(f"/listings/{listing.id}")
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
