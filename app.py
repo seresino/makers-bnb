@@ -4,6 +4,7 @@ from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
 from lib.account import *
+from lib.listing import *
 
 
 # Create a new Flask app
@@ -40,7 +41,8 @@ def after_request(response):
 #   ; open http://localhost:5000/
 @app.route('/', methods=['GET'])
 def get_index():
-    return render_template('index.html')
+    listings = Listing.select()
+    return render_template('index.html', listings=listings)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
