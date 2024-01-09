@@ -7,25 +7,35 @@
             If you're wondering how the CSS file below is being loaded.
         -->
         <link rel="stylesheet" href="/static/style.css" >
-    </head>
     <body>
-        <h1>Welcome to MakersBnb!</h1>
-        <p>(This is the homepage)</p>
-        {% if account %}
-            <p class="user">
-                Hello, {{ account }}!
-            </p>
-            <a href="/logout">Log Out</a>
-        {% endif %}
+
+      <nav class="navbar">
         <ul>
-            {% for listing in listings %}
-            <li>
-                {{ listing.name }}<br>
-                {{ listing.address }}<br>
-                {{ listing.description }}<br> 
-                £{{ listing.price }}<br>
-            </li>
-            {% endfor %}
+          <li><a href="{{ url_for('get_index') }}">Home</a></li>
+          <li><a href="{{ url_for('get_signup')}}">Sign Up</a></li>
+          <li><a href="{{ url_for('get_login')}}">Login</a></li>
         </ul>
+      </nav>
+
+      <h1>Welcome to MakersBnb!</h1>
+      <p>(This is the homepage)</p>
+      
+      {% if account %}
+          <p class="user">
+              Hello, {{ account }}!
+          </p>
+          <a href="/logout">Log Out</a>
+      {% endif %}
+
+      {% for listing in listings %}
+      <ul class="listing">
+        <li>
+          {{ listing.name }}<br>
+          {{ listing.address }}<br>
+          {{ listing.description }}<br> 
+          £{{ listing.price }}<br><br>
+        </li>
+      </ul>
+      {% endfor %}
     </body>
 </html>
