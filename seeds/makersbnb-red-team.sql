@@ -37,7 +37,33 @@ CREATE TABLE listing (
 INSERT INTO account (username, first_name, last_name, email, password, phone_number)
 VALUES
     ('JohnD', 'John', 'Doe', 'johndoe@example.com', 'password123', '07973661188');
+INSERT INTO account (username, first_name, last_name, email, password, phone_number)
+VALUES
+    ('RubyS', 'Ruby', 'Seresin', 'ruby@example.com', 'password1234', '07973661100');
+INSERT INTO account (username, first_name, last_name, email, password, phone_number)
+VALUES
+    ('DanG', 'Dan', 'Gullis', 'dan@example.com', 'password1235', '07973661122');
+INSERT INTO account (username, first_name, last_name, email, password, phone_number)
+VALUES
+    ('KatB', 'Kat', 'Biel', 'kat@example.com', 'password1236', '07973661133');
+INSERT INTO account (username, first_name, last_name, email, password, phone_number)
+VALUES
+    ('AmparoG', 'Amparo', 'Guevara', 'amparo@example.com', 'password1237', '07973661144');
+
+
 
 INSERT INTO listing (name, address, description, price, account_id)
 VALUES
     ('JohnD house', '145 JohnD lane, London', 'Two bedroom flat, next to the sea', 100, 1);
+INSERT INTO listing (name, address, description, price, account_id)
+VALUES
+    ('RubyS house', '12 Fairytale lane, London', 'Ten bedroom mansion', 300, 2);
+INSERT INTO listing (name, address, description, price, account_id)
+VALUES
+    ('RubyS cottage', '34 Cottage lane, Village', 'Beautiful cottage in the woods', 150, 2);
+INSERT INTO listing (name, address, description, price, account_id)
+VALUES
+    ('DanG', '22 High Street, London', 'Modern loft', 350, 3);
+INSERT INTO listing (name, address, description, price, account_id)
+VALUES
+    ('KatB', '12 Nowhere lane, Middletown', 'Quiet house in the wilderness', 350, 3);
