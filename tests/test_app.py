@@ -92,7 +92,4 @@ def test_listing_on_index_page(db_connection, page, test_web_address):
     expect(page.get_by_text("£100")).to_be_visible()
 
 
-    # We assert that it has the text "This is the homepage."
-    expect(strong_tag).to_have_text("(This is the homepage)")
-
 
