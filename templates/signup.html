@@ -1,54 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>MakersBnB</title>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-        <h1>Sign Up</h1>
+{% extends 'base.html' %}
 
-        <!-- This creates a form that will submit to POST /signup -->
-        <form action="/signup" method="post">
+{% block navbar_links %}
 
-            <!-- We check to see if there are any errors from a previous submission -->
-            {% if error %}
-                <p class="t-errors">
-                    {{ error }}
-                </p>
-            {% endif %}
+  <li><a href="{{ url_for('get_login')}}">Login</a></li>
 
-            <p>
-                <label for="username">Username</label>
-                <input type="text" name="username" id="username">
-            </p>
-            </p>
-            <p>
-                <label for="firstname">First Name</label>
-                <input type="text" name="firstname" id="firstname">
-            </p>
-            <p>
-                <label for="lastname">Last Name</label>
-                <input type="text" name="lastname" id="lastname">
-            </p>
-            <p>
-                <label for="email">Email</label>
-                <input type="text" name="email" id="email">
-            </p>
-            <p>
-                <label for="phone">Phone Number</label>
-                <input type="text" name="phone" id="phone">
-            </p>
-            <p>
-                <label for="password">Password</label>
-                <input type="text" name="password" id="password">
-            </p>
-            <p>
-                <!-- `type` is submit here, to indicate it is a button -->
-                <!-- `value` is used as the button's text -->
-                <input type="submit" value="Sign Up">
-            </p>
-        </form>
+{% endblock %}
 
-        <a href="/">Back to All Listings</a>
-    </body>
-</html>
+{% block headings %}
+
+  <h1>Sign Up</h1>
+
+{% endblock %}
+
+{% block content %}
+
+  <!-- This creates a form that will submit to POST /signup -->
+  <form action="/signup" method="post">
+
+      <!-- We check to see if there are any errors from a previous submission -->
+    {% if error %}
+        <p class="t-errors">
+            {{ error }}
+        </p>
+    {% endif %}
+
+    <p>
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username">
+    </p>
+    </p>
+    <p>
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" id="firstname">
+    </p>
+    <p>
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname" id="lastname">
+    </p>
+    <p>
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email">
+    </p>
+    <p>
+        <label for="phone">Phone Number</label>
+        <input type="text" name="phone" id="phone">
+    </p>
+    <p>
+        <label for="password">Password</label>
+        <input type="text" name="password" id="password">
+    </p>
+    <p>
+        <!-- `type` is submit here, to indicate it is a button -->
+        <!-- `value` is used as the button's text -->
+        <input type="submit" value="Sign Up">
+    </p>
+  </form>
+
+  <a href="/">Back to All Listings</a>
+
+{% endblock %}
