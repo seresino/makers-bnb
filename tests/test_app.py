@@ -33,7 +33,6 @@ def test_post__valid_login(page, test_web_address, db_connection):
     page.fill("input[name='email']", "johndoe@example.com")
     page.fill("input[name='password']", "password123")
     page.click("input[type='submit']")
-    print(f"Current URL after form submission: {page.url}")
     heading_tag = page.locator("h1")
     expect(heading_tag).to_have_text("Welcome to MakersBnb!")
     username = page.locator(".user")
@@ -49,7 +48,6 @@ def test_post_invalid_password(page, test_web_address, db_connection):
     page.fill("input[name='email']", "johndoe@example.com")
     page.fill("input[name='password']", "wrongpassword")
     page.click("input[type='submit']")
-    print(f"Current URL after form submission: {page.url}")
     error_message = page.locator(".t-errors")
     expect(error_message).to_have_text("Incorrect password. Please try again.")
 
@@ -62,7 +60,19 @@ def test_post_invalid_email(page, test_web_address, db_connection):
     page.goto(f"http://{test_web_address}/login")
     page.fill("input[name='email']", "wrongemail@example.com")
     page.fill("input[name='password']", "password123")
-    page.click("text='Log On'")
-    print(f"Current URL after form submission: {page.url}")
+    page.click("input[type='submit']")
     error_message = page.locator(".t-errors")
     expect(error_message).to_have_text("User not found. Please check your email.")
+
+"""
+Once logged in, pressing log out takes you back to the / page without a greeting
+"""
+def test_log_out(page, test_web_address, db_connection):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/login")
+    page.fill("input[name='email']", "johndoe@example.com")
+    page.fill("input[name='password']", "password123")
+    page.click("input[type='submit']")
+    page.click("text='Log Out'")
+    p_tag = page.locator("p")
+    expect(p_tag).to_have_text("(This is the homepage)")

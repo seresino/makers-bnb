@@ -4,11 +4,13 @@ from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
 from lib.account import *
+from datetime import timedelta
 
 
 # Create a new Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a7sk21'
+app.permanent_session_lifetime = timedelta(minutes=120)
 
 # Environment variables
 load_dotenv()
@@ -41,14 +43,14 @@ def after_request(response):
 #   ; open http://localhost:5000/
 @app.route('/', methods=['GET'])
 def get_index():
-    return render_template('index.html')
+    return render_template('index.html', account=session.get('username'))
 
 @app.route('/login', methods=['GET'])
 def get_login():
-    return render_template('login.html')
-
-def is_logged_in():
-    return 'user_id' in session
+    if session.get('username') != None:
+        return redirect('/')
+    else:
+        return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def post_login():
@@ -56,12 +58,12 @@ def post_login():
     password = request.form['password']
     try:
         accounts = Account.select().where(Account.email == email)
-        if accounts.exists():  # Check if any matching accounts were found
+        if accounts.exists(): 
             if password == accounts[0].password:
                 account = accounts[0]
+                session.permanent = True
                 session['username'] = account.username
-                person = session.get('username')
-                return render_template('index.html', account=person)
+                return redirect('/')
             else:
                 error_message = "Incorrect password. Please try again."
         else:
@@ -72,24 +74,11 @@ def post_login():
     # Pass the error message to the template and render the login page
     return render_template('login.html', error=error_message)
 
-@app.route('/<int:id>', methods=['GET'])
-def get_account_page():
-    if not is_logged_in():
-        return redirect('/login')
-    else:
-        logged_in_user = is_logged_in()
-        return render_template('login.html', account=logged_in_user)
-
 @app.route('/logout', methods=['GET'])
 def logout():
-    session.pop('user_id', None)  # Clear the user_id from the session
+    # Clear the user_id from the session
+    session.pop('username', None)
     return redirect('/')
-
-@app.route('/profile', methods=['GET'])
-def get_profile():
-    if not is_logged_in():
-        return redirect('/login')
-    # Continue with displaying the user's profile
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
