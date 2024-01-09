@@ -6,21 +6,28 @@
   <body>
     <h1>Add new space</h1>
     <form action="/" method="POST">
-        {% if errors %}
-            <div class="t-errors">Your submission contains errors: {{errors}}</div>
-        {% endif %}
         <p>
-        <label for="title">Title</label>
+        <label for="name">Name</label>
         <br>
-        <input type="text" name="title" id="title">
+        <input type="text" name="name" id="name">
         </p>
         <p>
-        <label for="release_year">Release year</label>
+        <label for="address">Address</label>
         <br>
-        <input type="number" name="release_year" id="release_year">
+        <input type="text" name="address" id="address">
         </p>
         <p>
-        <input type="submit" value="Add album">
+        <label for="description">Description</label>
+        <br>
+        <input type="text" name="description" id="description">
+        </p>
+        <p>
+        <label for="price">Price</label>
+        <br>
+        <input type="number" name="price" id="price">
+        </p>
+        <p>
+        <input type="submit" value="Add space">
         </p>
     </form>
   </body>

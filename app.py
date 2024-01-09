@@ -86,9 +86,28 @@ def logout():
 def add_space():
     return render_template('add_listing.html')
 
+@app.route('/', methods=['POST'])
+def post_listing():
+
+    name = request.form['name']
+    address = request.form['address']
+    description = request.form['description']
+    price = request.form['price']
+    
+    listing = Listing(name=name, address=address, description=description, price=price)
+    listing.save()
+
+    session.permanent = True
+    session['username'] = listing.account.username
+    listings = Listing.select()
+    return render_template('index.html')
+    # return redirect(f"/{listing.id}")
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
 # if started in test mode.
 if __name__ == '__main__':
     app.run(debug=True, port=int(os.environ.get('PORT', 5000)))
+
+
+    
