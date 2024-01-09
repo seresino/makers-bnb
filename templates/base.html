@@ -13,33 +13,13 @@
         <ul>
           <li><a href="{{ url_for('get_index') }}">Home</a></li>
           {% block navbar_links %} {% endblock %}
-          <!-- <li><a href="{{ url_for('get_signup')}}">Sign Up</a></li>
-          <li><a href="{{ url_for('get_login')}}">Login</a></li> -->
         </ul>
       </nav>
 
       {% block headings %} {% endblock %}
-      <!-- <h1>Welcome to MakersBnb!</h1>
-      <p>(This is the homepage)</p> -->
+      
       <main>
       {% block content %} {% endblock %}
       </main>
-      <!-- {% if account %}
-          <p class="user">
-              Hello, {{ account }}!
-          </p>
-          <a href="/logout">Log Out</a>
-      {% endif %} -->
-
-      <!-- {% for listing in listings %}
-      <ul class="listing">
-        <li>
-          {{ listing.name }}<br>
-          {{ listing.address }}<br>
-          {{ listing.description }}<br> 
-          £{{ listing.price }}<br><br>
-        </li>
-      </ul>
-      {% endfor %} -->
     </body>
 </html>
