@@ -12,5 +12,12 @@
     <body>
         <h1>Welcome to MakersBnb!</h1>
         <p>(This is the homepage)</p>
+        {% if account %}
+            <p class="user">
+                Hello, {{ account }}!
+            </p>
+        {% endif %}
+
+        
     </body>
 </html>
