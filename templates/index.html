@@ -1,41 +1,44 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>MakersBnB</title>
-        <!--
-            Head to https://github.com/makersacademy/web-applications-in-python/blob/main/pills/loading_css_or_static_files.md
-            If you're wondering how the CSS file below is being loaded.
-        -->
-        <link rel="stylesheet" href="/static/style.css" >
-    <body>
+{% extends 'base.html' %}
 
-      <nav class="navbar">
-        <ul>
-          <li><a href="{{ url_for('get_index') }}">Home</a></li>
-          <li><a href="{{ url_for('get_signup')}}">Sign Up</a></li>
-          <li><a href="{{ url_for('get_login')}}">Login</a></li>
-        </ul>
-      </nav>
+{% block navbar_links %}
 
-      <h1>Welcome to MakersBnb!</h1>
-      <p>(This is the homepage)</p>
+  {% if account %}
+    <li><a href="">Add Listing</a></li>
+    <li><a href="/logout">Logout</a></li>
+  {% else %}
+    <li><a href="{{ url_for('get_signup')}}">Sign Up</a></li>
+    <li><a href="{{ url_for('get_login')}}">Login</a></li>
+  {% endif %}
+{% endblock %}
+
+{% block headings %} 
+
+  <h1>Welcome to MakersBnb!</h1>
+  <p>(This is the homepage)</p>
+
+{% endblock %}
+
+{% block content %}
       
-      {% if account %}
-          <p class="user">
-              Hello, {{ account }}!
-          </p>
-          <a href="/logout">Log Out</a>
-      {% endif %}
+  {% if account %}
+      <p class="user">
+          Hello, {{ account }}!
+      </p>
+  {% else %}
+      <p class="user">
+        Hello Guest!
+      </p>
+  {% endif %}
 
-      {% for listing in listings %}
-      <ul class="listing">
-        <li>
-          {{ listing.name }}<br>
-          {{ listing.address }}<br>
-          {{ listing.description }}<br> 
-          £{{ listing.price }}<br><br>
-        </li>
-      </ul>
-      {% endfor %}
-    </body>
-</html>
+  {% for listing in listings %}
+  <ul class="listing">
+    <li>
+      {{ listing.name }}<br>
+      {{ listing.address }}<br>
+      {{ listing.description }}<br> 
+      £{{ listing.price }}<br><br>
+    </li>
+  </ul>
+  {% endfor %}
+
+{% endblock %}
