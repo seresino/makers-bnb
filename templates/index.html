@@ -20,9 +20,7 @@
         <ul>
             {% for listing in listings %}
             <li>
-                {{ listing.name }}<br>
-                {{ listing.address }}<br>
-                {{ listing.description }}<br> 
+                <a href='/listings/{{listing.id}}'>{{ listing.name }}</a><br>
                 £{{ listing.price }}<br>
             </li>
             {% endfor %}

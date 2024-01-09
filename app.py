@@ -106,6 +106,10 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
+@app.route('/listings/<int:id>', methods=['GET'])
+def get_listing(id):
+    listing = Listing.get(Listing.id == id)
+    return render_template('show.html', listing=listing)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
