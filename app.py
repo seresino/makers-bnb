@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from peewee import *
 from lib.account import *
 from datetime import timedelta
+from lib.listing import *
 
 
 # Create a new Flask app
@@ -43,7 +44,8 @@ def after_request(response):
 #   ; open http://localhost:5000/
 @app.route('/', methods=['GET'])
 def get_index():
-    return render_template('index.html', account=session.get('username'))
+    listings = Listing.select()
+    return render_template('index.html', account=session.get('username'), listings=listings)
 
 @app.route('/login', methods=['GET'])
 def get_login():
@@ -79,6 +81,7 @@ def logout():
     # Clear the user_id from the session
     session.pop('username', None)
     return redirect('/')
+
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
