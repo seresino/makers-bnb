@@ -16,6 +16,32 @@ def test_get_index(page, test_web_address):
     expect(paragraph_tag).to_have_text("(This is the homepage)")
 
 """
+We can render the signup page
+"""
+def test_get_signup(page, test_web_address):
+    page.goto(f"http://{test_web_address}/signup")
+    strong_tag = page.locator("h1")
+    expect(strong_tag).to_have_text("Sign Up")
+
+"""
+After entering information, the signup page redirects to the / page for the user
+"""
+def test_post__valid_signup(page, test_web_address, db_connection):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/signup")
+    page.fill("input[name='username']", "newuser")
+    page.fill("input[name='email']", "new")
+    page.fill("input[name='email']", "user")
+    page.fill("input[name='email']", "new@email.com")
+    page.fill("input[name='phone']", "0207777777")
+    page.fill("input[name='password']", "123")
+    page.click("input[type='submit']")
+    heading_tag = page.locator("h1")
+    expect(heading_tag).to_have_text("Welcome to MakersBnb!")
+    username = page.locator(".user")
+    expect(username).to_have_text("Hello, newuser!")
+
+"""
 We can render the login page
 """
 def test_get_login(page, test_web_address):
