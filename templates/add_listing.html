@@ -1,33 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>MakersBnb</title>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-        <h1>Add space</h1>
-
-        <!-- This creates a form that will submit to POST /login -->
-        <form action="/login" method="post">
-
-            <!-- We check to see if there are any errors from a previous submission -->
-            {% if error %}
-                <p class="t-errors">
-                    {{ error }}
-                </p>
-            {% endif %}
-
-            <p>
-                <label for="email">Email</label>
-                <input type="text" name="email" id="email">
-            </p>
-            <p>
-                <label for="password">Password</label>
-                <input type="text" name="password" id="password">
-            </p>
-            <p>
-                <!-- `type` is submit here, to indicate it is a button -->
-                <!-- `value` is used as the button's text -->
-                <input type="submit" value="Log On">
-            </p>
-        </form>
+  <head>
+    <title>New Space</title>
+  </head>
+  <body>
+    <h1>Add new space</h1>
+    <form action="/" method="POST">
+        {% if errors %}
+            <div class="t-errors">Your submission contains errors: {{errors}}</div>
+        {% endif %}
+        <p>
+        <label for="title">Title</label>
+        <br>
+        <input type="text" name="title" id="title">
+        </p>
+        <p>
+        <label for="release_year">Release year</label>
+        <br>
+        <input type="number" name="release_year" id="release_year">
+        </p>
+        <p>
+        <input type="submit" value="Add album">
+        </p>
+    </form>
+  </body>
+</html>
