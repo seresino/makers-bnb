@@ -28,7 +28,8 @@ CREATE TABLE listing (
     name VARCHAR(255) NOT NULL,
     address VARCHAR(255),
     description VARCHAR(255),
-    price VARCHAR(255),
+    price int,
+    account_id int,
     constraint fk_account foreign key(account_id) references account(id) on delete cascade
 );
 
@@ -39,4 +40,4 @@ VALUES
 
 INSERT INTO listing (name, address, description, price, account_id)
 VALUES
-    ('JohnD house', '145 JohnD lane, London', 'Two bedroom flat, next to the sea', '£100', 1);
+    ('JohnD house', '145 JohnD lane, London', 'Two bedroom flat, next to the sea', 100, 1);
