@@ -13,13 +13,15 @@ def test_returns_data(db_connection):
     assert availability[0].listing.id == 1
     assert str(availability[0].start_date) == '2024-02-01'
     assert str(availability[0].end_date) == '2024-02-10'
-    assert availability[0].status == 'available'
+    assert availability[0].available == True
+    assert availability[0].requested == False
 
     assert availability[3].id == 4
     assert availability[3].listing.id == 3
     assert str(availability[3].start_date) == '2024-02-03'
     assert str(availability[3].end_date) == '2024-02-05'
-    assert availability[3].status == 'available'
+    assert availability[3].available == True
+    assert availability[3].requested == False
 
 
 

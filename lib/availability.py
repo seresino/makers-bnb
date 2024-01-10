@@ -12,7 +12,8 @@ class Availability(Model):
     listing = ForeignKeyField(Listing, backref='listing')
     start_date = DateField()
     end_date = DateField()
-    status = CharField()
+    available = BooleanField()
+    requested = BooleanField()
 
     class Meta:
         database = db 
