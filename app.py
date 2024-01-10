@@ -9,6 +9,9 @@ from lib.listing import *
 from wtforms import Form, StringField, validators
 from wtforms.validators import Regexp, ValidationError
 from sqlalchemy.exc import IntegrityError
+from lib.availability import *
+import json
+
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -165,8 +168,25 @@ def post_listing():
 
 @app.route('/listings/<int:id>', methods=['GET'])
 def get_listing(id):
-    listing = Listing.get(Listing.id == id)
-    return render_template('show.html', listing=listing, account=session.get('username'))
+    individual_listing = Listing.get(Listing.id == id)
+    # print("individual listing: ", individual_listing)
+    
+    # Fetch the availabilities for the listing
+    availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
+    print("availability.listing_id: ", availabilities[0].listing_id)
+    # Create a list to hold the availability data as dictionaries
+    availability_data = []
+    for availability in availabilities:
+        if availability.available == True:
+            availability_data.append({
+                'title': 'Available',
+                'start': availability.start_date.isoformat(),  # Convert to ISO format
+                'end': availability.end_date.isoformat(),      # Convert to ISO format
+            })
+    
+    # # Convert the list to a JSON object
+    availability_json = json.dumps(availability_data)
+    return render_template('show.html', listing=individual_listing, account=session.get('username'), availability_json=availability_json)
 
 
 # These lines start the server if you run this file directly
