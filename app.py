@@ -47,6 +47,30 @@ def get_index():
     listings = Listing.select()
     return render_template('index.html', account=session.get('username'), listings=listings)
 
+@app.route('/signup', methods=['GET'])
+def get_signup():
+    if session.get('username') != None:
+        return redirect('/')
+    else:
+        return render_template('signup.html')
+
+@app.route('/signup', methods=['POST'])
+def post_signup():
+    username = request.form['username']
+    firstname = request.form['firstname']
+    lastname = request.form['firstname']
+    email = request.form['email']
+    phone = request.form['phone']
+    password = request.form['password']
+
+    # We eventually some checks before creating a new user e.g. that email is unique, email is in valid format etc.
+    account = Account(username=username, first_name=firstname, last_name=lastname, email=email, phone_number=phone, password=password)
+    account.save()
+
+    session.permanent = True
+    session['username'] = account.username
+    return redirect(f"/")
+
 @app.route('/login', methods=['GET'])
 def get_login():
     if session.get('username') != None:
@@ -102,8 +126,7 @@ def post_listing():
         listing = Listing(name=name, address=address, description=description, price=price, account=person)
         listing.save()
         listings = Listing.select()
-        return redirect('/')
-        # return redirect(f"/listings/{listing.id}")
+        return redirect(f"/listings/{listing.id}")
 
 @app.route('/listings/<int:id>', methods=['GET'])
 def get_listing(id):
