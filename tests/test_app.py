@@ -20,6 +20,7 @@ We can render the signup page
 """
 def test_get_signup(page, test_web_address):
     page.goto(f"http://{test_web_address}/signup")
+    page.wait_for_selector("h1")
     strong_tag = page.locator("h1")
     expect(strong_tag).to_have_text("Sign Up")
 
@@ -30,12 +31,13 @@ def test_post__valid_signup(page, test_web_address, db_connection):
     db_connection.seed("seeds/makersbnb-red-team.sql")
     page.goto(f"http://{test_web_address}/signup")
     page.fill("input[name='username']", "newuser")
-    page.fill("input[name='email']", "new")
-    page.fill("input[name='email']", "user")
+    page.fill("input[name='firstname']", "new")
+    page.fill("input[name='lastname']", "user")
     page.fill("input[name='email']", "new@email.com")
     page.fill("input[name='phone']", "0207777777")
     page.fill("input[name='password']", "123")
     page.click("input[type='submit']")
+    print(page.content())
     heading_tag = page.locator("h1")
     expect(heading_tag).to_have_text("Welcome to MakersBnb!")
     username = page.locator(".user")
@@ -145,3 +147,22 @@ def test_get_listing(page, test_web_address, db_connection):
     page.click("text='JohnD house'")
     address = page.locator(".address")
     expect(address).to_have_text("Address: 145 JohnD lane, London")
+
+# '''
+# When we signup with correct username, first and last names, email, phone and password
+# the account is created and we are redirected to the main page
+# '''
+# def test_sign_up_with_correct_details(page, test_web_address, db_connection):
+#     db_connection.seed("seeds/makersbnb-red-team.sql")
+#     page.goto(f"http://{test_web_address}/signup")
+#     page.fill("input[name='username']", "TestUser")
+#     page.fill("input[name='firstname']", "Name")
+#     page.fill("input[name='lastname']", "Surname")
+#     page.fill("input[name='email']", "test@example.com")
+#     page.fill("input[name='phone']", "7999999999")
+#     page.fill("input[name='password']", "password1")
+#     page.click("input[type='submit']")
+#     heading_tag = page.locator("h1")
+#     expect(heading_tag).to_have_text("Welcome to MakersBnb!")
+#     username = page.locator(".user")
+#     expect(username).to_have_text("Hello, newuser!")
