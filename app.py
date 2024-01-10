@@ -6,6 +6,7 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
+import json
 
 
 # Create a new Flask app
@@ -35,6 +36,20 @@ def before_request():
 def after_request(response):
     db.close()
     return response
+
+availability_data = [
+    {
+        'title': 'Available',
+        'start_date': '2024-01-01',
+        'end_date': '2024-01-03',
+    },
+    {
+        'title': 'Booked',
+        'start_date': '2024-01-10',
+        'end_date': '2024-01-15',
+    },
+]
+availability_json = json.dumps(availability_data)
 
 # == Your Routes Here ==
 
@@ -131,7 +146,7 @@ def post_listing():
 @app.route('/listings/<int:id>', methods=['GET'])
 def get_listing(id):
     listing = Listing.get(Listing.id == id)
-    return render_template('show.html', listing=listing, account=session.get('username'))
+    return render_template('show.html', listing=listing, account=session.get('username'), availability_json=availability_json)
 
 
 # These lines start the server if you run this file directly
