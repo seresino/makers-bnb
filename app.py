@@ -11,11 +11,13 @@ from wtforms.validators import Regexp, ValidationError
 from sqlalchemy.exc import IntegrityError
 from lib.availability import *
 import json
+from flask_bcrypt import Bcrypt
 
 
 # Create a new Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a7sk21'
+bcrypt = Bcrypt(app)
 app.permanent_session_lifetime = timedelta(minutes=120)
 
 # Environment variables
@@ -81,6 +83,7 @@ def post_signup():
         email = form.email.data
         phone = form.phone.data
         password = form.password.data
+        hashed_password = bcrypt.generate_password_hash(password)
 
         try:
             account = Account.create(
@@ -89,7 +92,7 @@ def post_signup():
                 last_name=lastname,
                 email=email,
                 phone_number=phone,
-                password=password
+                password=hashed_password
             )
 
             session.permanent = True
@@ -122,7 +125,7 @@ def post_login():
     try:
         accounts = Account.select().where(Account.email == email)
         if accounts.exists(): 
-            if password == accounts[0].password:
+            if accounts[0].password == password or bcrypt.check_password_hash(accounts[0].password, password):
                 account = accounts[0]
                 session.permanent = True
                 session['username'] = account.username
