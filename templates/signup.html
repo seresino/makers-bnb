@@ -18,6 +18,16 @@
         </p>
     {% endif %}
 
+    {% if form.errors %}
+    <ul class="t-errors">
+      {% for field, errors in form.errors.items() %}
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+
     <p>
         <label for="username">Username</label>
         <input type="text" name="username" id="username">

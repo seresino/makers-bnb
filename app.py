@@ -6,8 +6,12 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
+from wtforms import Form, StringField, validators
+from wtforms.validators import Regexp, ValidationError
+from sqlalchemy.exc import IntegrityError
 from lib.availability import *
 import json
+
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -26,6 +30,15 @@ db = PostgresqlDatabase(
     password='',  # Your PostgreSQL password
     host='localhost'  # Your PostgreSQL host
 )
+
+
+class SignupForm(Form):
+    username = StringField('Username', [validators.InputRequired(message='Username cannot be blank.')])
+    firstname = StringField('First Name', [validators.InputRequired(message='First Name cannot be blank.')])
+    lastname = StringField('Last Name', [validators.InputRequired(message='Last name cannot be blank.')])
+    email = StringField('Email', [validators.InputRequired(message='Email is required.'), validators.Email(message='Invalid email address.')])
+    phone = StringField('Phone', [validators.InputRequired(message='Phone number is required'), Regexp(r'^\d{10}$', message='Phone number must be 10 digits')])
+    password = StringField('Password', [validators.InputRequired(message='Password cannot be blank.')])
 
 # Initialize the database connection in the Flask app context
 @app.before_request
@@ -53,24 +66,48 @@ def get_signup():
     if session.get('username') != None:
         return redirect('/')
     else:
-        return render_template('signup.html')
+        form = SignupForm()
+        error = None
+        return render_template('signup.html', form=form, error=error)
+
 
 @app.route('/signup', methods=['POST'])
 def post_signup():
-    username = request.form['username']
-    firstname = request.form['firstname']
-    lastname = request.form['firstname']
-    email = request.form['email']
-    phone = request.form['phone']
-    password = request.form['password']
+    form = SignupForm(request.form)
+    if form.validate():
+        # Form is valid, proceed with creating the account
+        username = form.username.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+        email = form.email.data
+        phone = form.phone.data
+        password = form.password.data
 
-    # We eventually some checks before creating a new user e.g. that email is unique, email is in valid format etc.
-    account = Account(username=username, first_name=firstname, last_name=lastname, email=email, phone_number=phone, password=password)
-    account.save()
+        try:
+            account = Account.create(
+                username=username,
+                first_name=firstname,
+                last_name=lastname,
+                email=email,
+                phone_number=phone,
+                password=password
+            )
 
-    session.permanent = True
-    session['username'] = account.username
-    return redirect(f"/")
+            session.permanent = True
+            session['username'] = account.username
+
+            # Redirect to the home page after successful signup
+            return redirect(url_for('get_index'))
+
+        except IntegrityError:
+            # Handle the case where a unique constraint (username or email) is violated
+            error = 'Username or email already exists'
+            return render_template('signup.html', form=form, error=error)
+
+    else:
+        # Form is not valid, render the signup page with errors
+        return render_template('signup.html', form=form)
+
 
 @app.route('/login', methods=['GET'])
 def get_login():
