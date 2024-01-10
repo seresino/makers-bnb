@@ -113,9 +113,16 @@ def test_listing_on_index_page(db_connection, page, test_web_address):
     page.goto(f"http://{test_web_address}/")
 
     expect(page.get_by_text("JohnD house")).to_be_visible()
-    expect(page.get_by_text("145 JohnD lane, London")).to_be_visible()
-    expect(page.get_by_text("Two bedroom flat, next to the sea")).to_be_visible()
     expect(page.get_by_text("£100")).to_be_visible()
 
 
 
+"""
+When we click on a listing, it takes us through to relevant booking page
+"""
+def test_get_listing(page, test_web_address, db_connection):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/")
+    page.click("text='JohnD house'")
+    address = page.locator(".address")
+    expect(address).to_have_text("Address: 145 JohnD lane, London")

@@ -33,7 +33,7 @@
   {% for listing in listings %}
   <ul class="listing">
     <li>
-      {{ listing.name }}<br>
+      <a href='/listings/{{listing.id}}'>{{ listing.name }}</a><br>
       {{ listing.address }}<br>
       {{ listing.description }}<br> 
       £{{ listing.price }}<br><br>
