@@ -148,21 +148,21 @@ def test_get_listing(page, test_web_address, db_connection):
     address = page.locator(".address")
     expect(address).to_have_text("Address: 145 JohnD lane, London")
 
-# '''
-# When we signup with correct username, first and last names, email, phone and password
-# the account is created and we are redirected to the main page
-# '''
-# def test_sign_up_with_correct_details(page, test_web_address, db_connection):
-#     db_connection.seed("seeds/makersbnb-red-team.sql")
-#     page.goto(f"http://{test_web_address}/signup")
-#     page.fill("input[name='username']", "TestUser")
-#     page.fill("input[name='firstname']", "Name")
-#     page.fill("input[name='lastname']", "Surname")
-#     page.fill("input[name='email']", "test@example.com")
-#     page.fill("input[name='phone']", "7999999999")
-#     page.fill("input[name='password']", "password1")
-#     page.click("input[type='submit']")
-#     heading_tag = page.locator("h1")
-#     expect(heading_tag).to_have_text("Welcome to MakersBnb!")
-#     username = page.locator(".user")
-#     expect(username).to_have_text("Hello, newuser!")
+'''
+When we signup with correct username, first and last names, phone and password, but wrong email
+error message display
+'''
+def test_sign_up_with_correct_details(page, test_web_address, db_connection):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/signup")
+    page.fill("input[name='username']", "TestUser")
+    page.fill("input[name='firstname']", "Name")
+    page.fill("input[name='lastname']", "Surname")
+    page.fill("input[name='email']", "test")
+    page.fill("input[name='phone']", "7999999999")
+    page.fill("input[name='password']", "password1")
+    page.click("input[type='submit']")
+    heading_tag = page.locator("h1")
+    error_message = page.locator(".t-errors")
+    expect(error_message).to_have_text("Invalid email address.")
+
