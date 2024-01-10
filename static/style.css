@@ -1,9 +1,14 @@
 h1{
   text-align: center;
 }
+.navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(192, 222, 192, 100%);
+}
 .navbar ul{
   list-style-type: none;
-  background-color: rgb(192, 222, 192, 100%);
   padding: 0px;
   margin: 0px;
   overflow: hidden;

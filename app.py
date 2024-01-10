@@ -110,7 +110,7 @@ def logout():
 def add_space():
     if session.get('username') == None:
         return redirect('/login')
-    return render_template('add_listing.html')
+    return render_template('add_listing.html', account=session.get('username'))
 
 @app.route('/', methods=['POST'])
 def post_listing():

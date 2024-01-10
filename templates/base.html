@@ -6,9 +6,12 @@
     </head>
     <body>
       <nav class="navbar">
-        <ul>
+        <ul class="left">
           <li><a href="{{ url_for('get_index') }}">Home</a></li>
+        </ul>
+        <ul class="right">
           {% if account %}
+          <li><a href="{{ url_for('add_space') }}">Add Space</a></li>
           <li><a href="{{ url_for('logout')}}">Log Out</a></li>
           {% else %}
           <li><a href="{{ url_for('get_login')}}">Login</a></li>
