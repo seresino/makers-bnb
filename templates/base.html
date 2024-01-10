@@ -2,16 +2,18 @@
 <html>
     <head>
         <title>MakersBnB Website</title>
-        <!--
-            Head to https://github.com/makersacademy/web-applications-in-python/blob/main/pills/loading_css_or_static_files.md
-            If you're wondering how the CSS file below is being loaded.
-        -->
         <link rel="stylesheet" href="/static/style.css" >
     </head>
     <body>
       <nav class="navbar">
         <ul>
           <li><a href="{{ url_for('get_index') }}">Home</a></li>
+          {% if account %}
+          <li><a href="{{ url_for('logout')}}">Log Out</a></li>
+          {% else %}
+          <li><a href="{{ url_for('get_login')}}">Login</a></li>
+          <li><a href="{{ url_for('get_signup')}}">Sign Up</a></li>
+          {% endif %}
           {% block navbar_links %} {% endblock %}
         </ul>
       </nav>
@@ -23,3 +25,4 @@
       </main>
     </body>
 </html>
+

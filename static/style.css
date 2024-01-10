@@ -21,3 +21,9 @@ h1{
 .navbar li{
   float: left;
 }
+.temp-calendar {
+    width: 100px;
+    height: 100px;
+    border: 1px black solid;
+}
+

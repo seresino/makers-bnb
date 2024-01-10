@@ -1,14 +1,6 @@
 {% extends 'base.html' %}
 
 {% block navbar_links %}
-
-  {% if account %}
-    <li><a href="">Add Listing</a></li>
-    <li><a href="/logout">Logout</a></li>
-  {% else %}
-    <li><a href="{{ url_for('get_signup')}}">Sign Up</a></li>
-    <li><a href="{{ url_for('get_login')}}">Login</a></li>
-  {% endif %}
 {% endblock %}
 
 {% block headings %} 
