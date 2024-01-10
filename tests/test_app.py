@@ -10,10 +10,10 @@ def test_get_index(page, test_web_address):
     page.goto(f"http://{test_web_address}/")
 
     # We look at the <p> tag
-    paragraph_tag = page.locator("p")
+    heading = page.locator("h1")
 
     # We assert that it has the text "(This is the homepage)"
-    expect(paragraph_tag).to_have_text("(This is the homepage)")
+    expect(heading).to_have_text("Welcome to MakersBnb!")
 
 """
 We can render the signup page
@@ -99,9 +99,9 @@ def test_log_out(page, test_web_address, db_connection):
     page.fill("input[name='email']", "johndoe@example.com")
     page.fill("input[name='password']", "password123")
     page.click("input[type='submit']")
-    page.click("text='Log Out'")
-    p_tag = page.locator("p")
-    expect(p_tag).to_have_text("(This is the homepage)")
+    page.click('a[href="/logout"]')
+    heading = page.locator("h1")
+    expect(heading).to_have_text("Welcome to MakersBnb!")
 
 
 """
