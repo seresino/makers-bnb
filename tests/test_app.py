@@ -42,6 +42,7 @@ def test_post__valid_signup(page, test_web_address, db_connection):
     expect(heading_tag).to_have_text("Welcome to MakersBnb!")
     username = page.locator(".user")
     expect(username).to_have_text("Hello, newuser!")
+    
 
 """
 We can render the login page
@@ -104,6 +105,7 @@ def test_log_out(page, test_web_address, db_connection):
     page.click('a[href="/logout"]')
     heading = page.locator("h1")
     expect(heading).to_have_text("Welcome to MakersBnb!")
+    
 
 
 """
@@ -115,9 +117,9 @@ def test_listing_on_index_page(db_connection, page, test_web_address):
     page.goto(f"http://{test_web_address}/")
 
     expect(page.get_by_text("JohnD house")).to_be_visible()
-    expect(page.get_by_text("£100")).to_be_visible()
+    expect(page.get_by_text("RubyS house")).to_be_visible()
 
-
+    
 '''
 After logging in, can create a listing
 And listing is added to the databse, and shown on home page listings

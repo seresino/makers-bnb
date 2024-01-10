@@ -11,7 +11,6 @@ def test_returns_data(db_connection):
 
     assert availability[0].id == 1
     assert availability[0].listing_id.id == 1
-    print('answer', availability[0].listing_id == 1)
     assert str(availability[0].start_date) == '2024-02-01'
     assert str(availability[0].end_date) == '2024-02-10'
     assert availability[0].available == True

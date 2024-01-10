@@ -31,7 +31,6 @@ db = PostgresqlDatabase(
     host='localhost'  # Your PostgreSQL host
 )
 
-
 class SignupForm(Form):
     username = StringField('Username', [validators.InputRequired(message='Username cannot be blank.')])
     firstname = StringField('First Name', [validators.InputRequired(message='First Name cannot be blank.')])
@@ -169,12 +168,11 @@ def post_listing():
 @app.route('/listings/<int:id>', methods=['GET'])
 def get_listing(id):
     individual_listing = Listing.get(Listing.id == id)
-    # print("individual listing: ", individual_listing)
     
     # Fetch the availabilities for the listing
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
-    print("availability.listing_id: ", availabilities[0].listing_id)
     # Create a list to hold the availability data as dictionaries
+    
     availability_data = []
     for availability in availabilities:
         if availability.available == True:
