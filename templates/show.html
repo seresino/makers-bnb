@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block headings %}
+    <h1>{{listing.name}}</h1>
+{% endblock %}
+
+{% block content %}
+        <p class="address">Address: {{listing.address}}</p>
+        <p>Description: {{listing.description}}</p>
+        <p>Price: £{{listing.price}}</p>
+
+        <div class="temp-calendar">
+            <p>Calendar Placeholder</p>
+        </div>
+        <br>
+        <a href="">Book</a>
+        <br>
+        <br>
+{% endblock %}

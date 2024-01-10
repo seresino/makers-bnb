@@ -82,7 +82,7 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
-@app.route('/add-space')
+@app.route('/add-space', methods=['GET'])
 def add_space():
     if session.get('username') == None:
         return redirect('/login')
@@ -104,6 +104,12 @@ def post_listing():
         listings = Listing.select()
         return redirect('/')
         # return redirect(f"/listings/{listing.id}")
+
+@app.route('/listings/<int:id>', methods=['GET'])
+def get_listing(id):
+    listing = Listing.get(Listing.id == id)
+    return render_template('show.html', listing=listing, account=session.get('username'))
+
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database

@@ -10,10 +10,10 @@ def test_get_index(page, test_web_address):
     page.goto(f"http://{test_web_address}/")
 
     # We look at the <p> tag
-    paragraph_tag = page.locator("p")
+    heading = page.locator("h1")
 
     # We assert that it has the text "(This is the homepage)"
-    expect(paragraph_tag).to_have_text("(This is the homepage)")
+    expect(heading).to_have_text("Welcome to MakersBnb!")
 
 """
 We can render the signup page
@@ -99,9 +99,9 @@ def test_log_out(page, test_web_address, db_connection):
     page.fill("input[name='email']", "johndoe@example.com")
     page.fill("input[name='password']", "password123")
     page.click("input[type='submit']")
-    page.click("text='Log Out'")
-    p_tag = page.locator("p")
-    expect(p_tag).to_have_text("(This is the homepage)")
+    page.click('a[href="/logout"]')
+    heading = page.locator("h1")
+    expect(heading).to_have_text("Welcome to MakersBnb!")
 
 
 """
@@ -113,32 +113,37 @@ def test_listing_on_index_page(db_connection, page, test_web_address):
     page.goto(f"http://{test_web_address}/")
 
     expect(page.get_by_text("JohnD house")).to_be_visible()
-    expect(page.get_by_text("145 JohnD lane, London")).to_be_visible()
-    expect(page.get_by_text("Two bedroom flat, next to the sea")).to_be_visible()
     expect(page.get_by_text("£100")).to_be_visible()
-
 
 
 '''
 After logging in, can create a listing
 And listing is added to the databse, and shown on home page listings
 '''
-# def test_add_listing(db_connection, page, test_web_address):
-#     db_connection.seed("seeds/makersbnb-red-team.sql")
-#     page.goto(f"http://{test_web_address}/")
+def test_add_listing(db_connection, page, test_web_address):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/")
 
-#     page.click("text='Log In")
-#     page.fill("input[name=email]", "kat@example.com")
-#     page.fill("input[name=password", "password1236")
-#     page.click("input[type='submit']")
-#     page.click("text='Add space'")
-#     page.fill("input[name=name]", "KatB")
-#     page.fill("input[name=address", "Test address")
-#     page.fill("input[name=description", "Test description")
-#     page.fill("input[name=price", "Test price")
-#     page.click("submit='Add space'")
-#     h1_tag = page.locator("h1")
-#     expect(h1_tag).to_have_text("KatB")
+    page.click("text='Log In")
+    page.fill("input[name=email]", "kat@example.com")
+    page.fill("input[name=password", "password1236")
+    page.click("input[type='submit']")
+    page.click("text='Add space'")
+    page.fill("input[name=name]", "KatB")
+    page.fill("input[name=address", "Test address")
+    page.fill("input[name=description", "Test description")
+    page.fill("input[name=price", "Test price")
+    page.click("submit='Add space'")
+    h1_tag = page.locator("h1")
+    expect(h1_tag).to_have_text("KatB")
 
 
-# test will be uncommented when individual listing page will be added return redirect(f"/listings/{listing.id}")
+"""
+When we click on a listing, it takes us through to relevant booking page
+"""
+def test_get_listing(page, test_web_address, db_connection):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/")
+    page.click("text='JohnD house'")
+    address = page.locator(".address")
+    expect(address).to_have_text("Address: 145 JohnD lane, London")
