@@ -70,7 +70,7 @@ VALUES
 INSERT INTO availability (listing_id, start_date, end_date, available, requested)
 VALUES
     (1, '2024-02-01', '2024-02-10', true, false),
-    (1, '2024-02-01', '2024-02-10', true, false),
+    (1, '2024-02-15', '2024-02-19', true, false),
     (2, '2024-02-02', '2024-02-04', true, false),
     (3, '2024-02-03', '2024-02-05', true, false),
     (4, '2024-02-20', '2024-02-22', true, false),

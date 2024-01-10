@@ -6,8 +6,8 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
+from lib.availability import *
 import json
-
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -36,20 +36,6 @@ def before_request():
 def after_request(response):
     db.close()
     return response
-
-availability_data = [
-    {
-        'title': 'Available',
-        'start_date': '2024-01-01',
-        'end_date': '2024-01-03',
-    },
-    {
-        'title': 'Booked',
-        'start_date': '2024-01-10',
-        'end_date': '2024-01-15',
-    },
-]
-availability_json = json.dumps(availability_data)
 
 # == Your Routes Here ==
 
@@ -145,8 +131,25 @@ def post_listing():
 
 @app.route('/listings/<int:id>', methods=['GET'])
 def get_listing(id):
-    listing = Listing.get(Listing.id == id)
-    return render_template('show.html', listing=listing, account=session.get('username'), availability_json=availability_json)
+    individual_listing = Listing.get(Listing.id == id)
+    # print("individual listing: ", individual_listing)
+    
+    # Fetch the availabilities for the listing
+    availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
+    print("availability.listing_id: ", availabilities[0].listing_id)
+    # Create a list to hold the availability data as dictionaries
+    availability_data = []
+    for availability in availabilities:
+        if availability.available == True:
+            availability_data.append({
+                'title': 'Available',
+                'start': availability.start_date.isoformat(),  # Convert to ISO format
+                'end': availability.end_date.isoformat(),      # Convert to ISO format
+            })
+    
+    # # Convert the list to a JSON object
+    availability_json = json.dumps(availability_data)
+    return render_template('show.html', listing=individual_listing, account=session.get('username'), availability_json=availability_json)
 
 
 # These lines start the server if you run this file directly
