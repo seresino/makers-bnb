@@ -116,6 +116,27 @@ def test_listing_on_index_page(db_connection, page, test_web_address):
     expect(page.get_by_text("£100")).to_be_visible()
 
 
+'''
+After logging in, can create a listing
+And listing is added to the databse, and shown on home page listings
+'''
+def test_add_listing(db_connection, page, test_web_address):
+    db_connection.seed("seeds/makersbnb-red-team.sql")
+    page.goto(f"http://{test_web_address}/")
+
+    page.click("text='Log In")
+    page.fill("input[name=email]", "kat@example.com")
+    page.fill("input[name=password", "password1236")
+    page.click("input[type='submit']")
+    page.click("text='Add space'")
+    page.fill("input[name=name]", "KatB")
+    page.fill("input[name=address", "Test address")
+    page.fill("input[name=description", "Test description")
+    page.fill("input[name=price", "Test price")
+    page.click("submit='Add space'")
+    h1_tag = page.locator("h1")
+    expect(h1_tag).to_have_text("KatB")
+
 
 """
 When we click on a listing, it takes us through to relevant booking page

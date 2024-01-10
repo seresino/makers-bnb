@@ -53,7 +53,7 @@ def get_signup():
         return redirect('/')
     else:
         return render_template('signup.html')
-    
+
 @app.route('/signup', methods=['POST'])
 def post_signup():
     username = request.form['username']
@@ -62,7 +62,7 @@ def post_signup():
     email = request.form['email']
     phone = request.form['phone']
     password = request.form['password']
-    
+
     # We eventually some checks before creating a new user e.g. that email is unique, email is in valid format etc.
     account = Account(username=username, first_name=firstname, last_name=lastname, email=email, phone_number=phone, password=password)
     account.save()
@@ -106,13 +106,39 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
+@app.route('/add-space', methods=['GET'])
+def add_space():
+    if session.get('username') == None:
+        return redirect('/login')
+    return render_template('add_listing.html')
+
+@app.route('/', methods=['POST'])
+def post_listing():
+    if session.get('username') == None:
+        return redirect('/login')
+    else:
+        name = request.form['name']
+        address = request.form['address']
+        description = request.form['description']
+        price = request.form['price']
+
+        person = Account.get(Account.username==session.get('username'))
+        listing = Listing(name=name, address=address, description=description, price=price, account=person)
+        listing.save()
+        listings = Listing.select()
+        return redirect(f"/listings/{listing.id}")
+
 @app.route('/listings/<int:id>', methods=['GET'])
 def get_listing(id):
     listing = Listing.get(Listing.id == id)
     return render_template('show.html', listing=listing, account=session.get('username'))
+
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
 # if started in test mode.
 if __name__ == '__main__':
     app.run(debug=True, port=int(os.environ.get('PORT', 5000)))
+
+
+    
