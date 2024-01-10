@@ -43,7 +43,6 @@ CREATE TABLE availability (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     available BOOLEAN NOT NULL, -- status can be 'available, 'booked', 'requested' etc.
-    requested BOOLEAN,
     CONSTRAINT fk_listing FOREIGN KEY (listing_id) REFERENCES listing(id) ON DELETE CASCADE
 );
 
@@ -67,14 +66,14 @@ VALUES
     ('DanG', '22 High Street, London', 'Modern loft', 350, 3),
     ('KatB', '12 Nowhere lane, Middletown', 'Quiet house in the wilderness', 350, 3);
 
-INSERT INTO availability (listing_id, start_date, end_date, available, requested)
+INSERT INTO availability (listing_id, start_date, end_date, available)
 VALUES
-    (1, '2024-02-01', '2024-02-10', true, false),
-    (1, '2024-02-15', '2024-02-19', true, false),
-    (2, '2024-02-02', '2024-02-04', true, false),
-    (3, '2024-02-03', '2024-02-05', true, false),
-    (4, '2024-02-20', '2024-02-22', true, false),
-    (5, '2024-02-15', '2024-02-18', true, false),
-    (2, '2024-02-10', '2024-02-11', true, false);
+    (1, '2024-02-01', '2024-02-10', true),
+    (1, '2024-02-15', '2024-02-19', true),
+    (2, '2024-02-02', '2024-02-04', true),
+    (3, '2024-02-03', '2024-02-05', true),
+    (4, '2024-02-20', '2024-02-22', true),
+    (5, '2024-02-15', '2024-02-18', true),
+    (2, '2024-02-10', '2024-02-11', true);
 
 
