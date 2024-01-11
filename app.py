@@ -190,6 +190,7 @@ def add_space():
 
 @app.route('/listings/<int:id>', methods=['GET', 'POST'])
 def get_listing(id):
+    logged_in_user=False
 
     individual_listing = Listing.get(Listing.id == id)
     
@@ -208,8 +209,7 @@ def get_listing(id):
     
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
-    else:
-        logged_in_user = False
+        
         if request.method == 'POST':
             start_date = request.form['start-date']
             end_date = request.form['end-date']
@@ -234,8 +234,8 @@ def get_listing(id):
 
 
             else:
-
                 if check_requested_booking_availability(availabilities, start_date, end_date):
+
                     new_booking_request = Booking.create(
                         listing_id = individual_listing,
                         account_id = logged_in_user,
@@ -251,8 +251,8 @@ def get_listing(id):
 
 
             return redirect(url_for('get_listing', id=id))
-        else:
-            return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
+    
+    return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
 
         # # Check if there are pending booking requests for this listing
         # pending_requests = Booking.select().where(
@@ -264,19 +264,6 @@ def get_listing(id):
         #                     account=session.get('username'), availabilities=availabilities,
         #                     pending_requests=pending_requests)
 
-    availability_data = []
-    for availability in availabilities:
-        if availability.available == True:
-            availability_data.append({
-                'title': 'Available',
-                'start': availability.start_date.isoformat(),  # Convert to ISO format
-                'end': availability.end_date.isoformat(),      # Convert to ISO format
-            })
-    
-    # # Convert the list to a JSON object
-    availability_json = json.dumps(availability_data)
-
-    return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
 
 
 
