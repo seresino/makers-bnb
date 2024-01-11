@@ -10,39 +10,55 @@
     
     <!-- Add a div element to contain the calendar -->
     <div id="calendar"></div>
-    <div id="availability-data" data-availability="{{ availability_json | tojson | safe }}"></div>
     <br>
-    <a href="">Book</a>
+
     <!-- Include the FullCalendar library and initialize the calendar -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
+                
             // Initialize FullCalendar with the events data
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'Month',
-                // headerToolbar: { center: 'Month,SixMonth' },
-                views: {
-                    Month: { // name of view
-                    type: 'dayGridMonth',
-                    // other view-specific options here
-                    },
-                    SixMonth: {
-                    type: 'multiMonth',
-                    duration: { months: 6 }
-                    }
-                },
-                buttonText: {
-                    today:    'Today',
-                    month:    'Month'
-                },
+                initialView: 'dayGridMonth',
                 selectable: true,
-                events: {{ availability_json | safe }},
-                eventDisplay: 'background'
+                events: {{ availability_json | safe }}
             });
+
             calendar.render();
-            
         });
     </script>
+    
+    {% if listing.id == logged_in_user.id %}
+        <form method='POST'>
+            <br>
+            <p>
+                Add Availability
+            </p>
+            <label for="availability-start">Start date:</label>
+            <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <br>
+            <label for="availability-end">End date:</label>
+            <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <p>
+                <button>Submit Availability</button>
+            </p>
+        </form>
+    
+    {% else %}
+        <form method='POST'>
+            <br>
+            <p>
+                Request to book
+            </p>
+            <label for="start">Start date:</label>
+            <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <br>
+            <label for="end">End date:</label>
+            <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <p>
+                <button>Submit Request</button>
+            </p>
+        </form>
+    {% endif %}
         
 {% endblock %}

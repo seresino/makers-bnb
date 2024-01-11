@@ -187,10 +187,27 @@ def add_space():
 def get_listing(id):
     individual_listing = Listing.get(Listing.id == id)
     
-    # Fetch the availabilities for the listing
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
-    # Create a list to hold the availability data as dictionaries
     
+    if session.get('username') != None:
+        logged_in_user = Account.get(Account.username == session.get('username'))
+        print(logged_in_user)
+        
+        if request.method == 'POST':
+            start_date = request.form['start-date']
+            end_date = request.form['end-date']
+            if logged_in_user.id == individual_listing.account_id:
+
+                new_availability = Availability.create(
+                    listing_id=individual_listing,
+                    start_date=start_date,
+                    end_date = end_date,
+                    available=True
+                )
+                new_availability.save()
+
+            return redirect(url_for('get_listing', id=id))
+
     availability_data = []
     for availability in availabilities:
         if availability.available == True:
@@ -202,7 +219,7 @@ def get_listing(id):
     
     # # Convert the list to a JSON object
     availability_json = json.dumps(availability_data)
-    return render_template('show.html', listing=individual_listing, account=session.get('username'), availability_json=availability_json)
+    return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
 
 @app.route('/bookings', methods=['GET'])
 def get_bookings():
