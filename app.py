@@ -7,7 +7,7 @@ from lib.account import *
 from datetime import timedelta
 from lib.listing import *
 from flask_wtf import FlaskForm
-from wtforms import Form, StringField, PasswordField, SubmitField, validators
+from wtforms import Form, StringField, PasswordField, SubmitField, validators, IntegerField
 from wtforms.validators import Regexp, ValidationError, InputRequired, Email
 from sqlalchemy.exc import IntegrityError
 from lib.availability import *
@@ -52,7 +52,7 @@ class AddListingForm(FlaskForm):
     name = StringField('Name', [InputRequired()])
     address = StringField('Address', [InputRequired()])
     description = StringField('Description', [InputRequired()])
-    price = IntegerField('Description', [InputRequired()]) 
+    price = StringField('Price', [InputRequired()]) 
     submit = SubmitField("Add Space")
 
 # Initialize the database connection in the Flask app context
