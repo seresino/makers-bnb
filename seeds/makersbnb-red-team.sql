@@ -13,6 +13,11 @@ DROP SEQUENCE IF EXISTS listing_id_seq CASCADE;
 DROP TABLE IF EXISTS availability CASCADE;
 DROP SEQUENCE IF EXISTS availability_id_seq CASCADE;
 
+DROP TABLE IF EXISTS booking CASCADE;
+DROP SEQUENCE IF EXISTS booking_id_seq CASCADE;
+
+
+
 -- Then, we recreate them
 CREATE SEQUENCE IF NOT EXISTS account_id_seq;
 CREATE TABLE account (
