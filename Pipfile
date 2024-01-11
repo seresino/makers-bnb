@@ -12,11 +12,9 @@ pytest-xprocess = "*"
 py = "*"
 peewee = "*"
 psycopg2 = "*"
-<<<<<<< HEAD
-=======
 python-dotenv = "*"
 playwright = "*"
->>>>>>> 5e21c75 (run programs)
+
 
 [dev-packages]
 autopep8 = "*"
