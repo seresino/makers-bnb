@@ -32,9 +32,8 @@
         });
     </script>
 
-
     {% with messages = get_flashed_messages() %}
-    {% if messages %}
+     {% if messages %}
         <ul class="flash-messages">
             {% for message in messages %}
                 <li>{{ message }}</li>
@@ -44,6 +43,7 @@
     {% endwith %}
     
     {% if logged_in_user != False %}
+
 
         {% if listing.id == logged_in_user.id %}
             <form method='POST'>

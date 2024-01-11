@@ -9,53 +9,55 @@
 {% block content %}
 
   <!-- This creates a form that will submit to POST /signup -->
-  <form action="/signup" method="post">
+  <div class="content">
+    <form action="/signup" method="post">
 
       <!-- We check to see if there are any errors from a previous submission -->
-    {% if error %}
-        <p class="t-errors">
-            {{ error }}
-        </p>
+      {% if error %}
+          <p class="t-errors">
+              {{ error }}
+          </p>
+      {% endif %}
+
+      {% if form.errors %}
+      <ul class="t-errors">
+        {% for field, errors in form.errors.items() %}
+          {% for error in errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
     {% endif %}
 
-    {% if form.errors %}
-    <ul class="t-errors">
-      {% for field, errors in form.errors.items() %}
-        {% for error in errors %}
-          <li>{{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-    </ul>
-  {% endif %}
+    {{ form.hidden_tag() }}
+    <div class="form-input">
+      <p class="label">Username</p>
+      <p class="input-box">{{ form.username(id='usernameField') }}</p>
+    </div>
+    <div class="form-input">
+      <p class="label">First Name</p>
+      <p class="input-box">{{ form.firstname(id='firstnameField') }}</p>
+    </div>
+    <div class="form-input">
+      <p class="label">Second Name</p>
+      <p class="input-box">{{ form.lastname(id='lastnameField') }}</p>
+    </div>
+    <div class="form-input">
+      <p class="label">Email</p>
+      <p class="input-box">{{ form.email(id='emailField') }}</p>
+    </div>
+    <div class="form-input">
+      <p class="label">Phone Number</p>
+      <p class="input-box">{{ form.phone(id='phoneField')}}</p>
+    </div>
+    <div class="form-input">
+      <p class="label">Password</p>
+      <p class="input-box">{{ form.password(id='passwordField') }}</p>
+    </div>
+    <div class="button">
+      {{ form.submit(id='submitField') }}
+    </div>
 
-  {{ form.hidden_tag() }}
-
-  <p>
-    Username
-    {{ form.username(id='usernameField') }}
-  </p>
-  <p>
-    First Name
-    {{ form.firstname(id='firstnameField') }}
-  </p>
-  <p>
-    Second Name
-    {{ form.lastname(id='lastnameField') }}
-  </p>
-  <p>
-    Email
-    {{ form.email(id='emailField') }}
-  </p>
-  <p>
-    Phone Number
-    {{ form.phone(id='phoneField')}}
-  </p>
-  <p>
-    Password
-    {{ form.password(id='passwordField') }}
-  </p>
-  <p>
-    {{ form.submit(id='submitField') }}
-  </p>
-
+  </div>
+  
 {% endblock %}

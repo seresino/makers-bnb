@@ -3,21 +3,23 @@
 {% block headings %} 
 
   <h1>Welcome to MakersBnb!</h1>
-  <p>(This is the homepage)</p>
 
 {% endblock %}
 
 {% block content %}
-      
-  {% if account %}
-      <p class="user">
-          Hello, {{ account }}!
-      </p>
-  {% else %}
-      <p class="user">
-        Hello Guest!
-      </p>
-  {% endif %}
+
+{% if account %}
+<p class="user">
+    Hello, {{ account }}
+</p>
+{% else %}
+<p class="user">
+  Hello Guest
+</p>
+{% endif %}
+
+<div class="listings">
+
 
   {% for listing in listings %}
   <ul class="listing">
@@ -29,5 +31,6 @@
     </li>
   </ul>
   {% endfor %}
-
+</div>
+  
 {% endblock %}

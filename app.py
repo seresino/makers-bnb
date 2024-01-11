@@ -186,12 +186,25 @@ def add_space():
     return render_template('add_listing.html', account=session.get('username'), form=form)
 
 
+
+
 @app.route('/listings/<int:id>', methods=['GET', 'POST'])
 def get_listing(id):
 
     individual_listing = Listing.get(Listing.id == id)
     
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
+    availability_data = []
+    for availability in availabilities:
+        if availability.available == True:
+            availability_data.append({
+                'title': 'Available',
+                'start': availability.start_date.isoformat(),  # Convert to ISO format
+                'end': availability.end_date.isoformat(),      # Convert to ISO format
+            })
+    
+    # # Convert the list to a JSON object
+    availability_json = json.dumps(availability_data)
     
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
@@ -212,11 +225,13 @@ def get_listing(id):
                     end_date = end_date,
                     available=True
                 )
+
                     new_availability.save()
                     flash("Availability updated", 'sucess')
         
                 else:
                     flash("Overlaps with existing availability", 'error')
+
 
             else:
 
@@ -234,7 +249,20 @@ def get_listing(id):
                     flash("Property not avilable for given dates", 'error')
 
 
+
             return redirect(url_for('get_listing', id=id))
+        else:
+            return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
+
+        # # Check if there are pending booking requests for this listing
+        # pending_requests = Booking.select().where(
+        #     (Booking.listing_id == individual_listing.id) &
+        #     (Booking.status == 'Requested')
+        # )
+
+        # return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user,
+        #                     account=session.get('username'), availabilities=availabilities,
+        #                     pending_requests=pending_requests)
 
     availability_data = []
     for availability in availabilities:
@@ -250,34 +278,54 @@ def get_listing(id):
 
     return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
 
+
+
+@app.route('/listings/<int:listing_id>/bookings/<int:booking_id>', methods=['POST'])
+def handle_booking_action(listing_id, booking_id):
+    if session.get('username') is None:
+        return redirect('/login')
+
+    logged_in_user = Account.get(Account.username == session.get('username'))
+    listing = Listing.get(Listing.id == listing_id)
+
+    # Ensure the logged-in user is the owner of the listing
+    if logged_in_user.id != listing.account_id:
+        return redirect(url_for('get_listing', id=listing_id))
+
+    booking = Booking.get(Booking.id == booking_id)
+
+    # Update the status of the booking based on the action
+    action = request.form.get('action')
+
+    if action == 'accept':
+        booking.status = 'Confirmed'
+    elif action == 'deny':
+        booking.status = 'Denied'
+
+    booking.save()
+
+    return redirect(url_for('get_listing', id=listing_id))
+
+
+
 @app.route('/bookings', methods=['GET'])
 def get_bookings():
     if session.get('username') == None:
         return redirect('/login')
     else:
-        # TBC
-        # person = Account.get(Account.username==session.get('username'))
-        # listings = Listing.select().where(Listing.account_id==person.id)
-        # numbers = [listing.id for listing in listings]
-        # received = (Booking
-        #     .select(Booking, Listing.name)
-        #     .join(Listing, on=(Booking.listing_id == Listing.id), join_type=JOIN.LEFT_OUTER)
-        #     .where(Booking.listing_id << numbers))
-        
-        # requested = (Booking
-        #     .select(Booking, Listing.name)
-        #     .join(Listing, on=(Booking.listing_id == Listing.id), join_type=JOIN.LEFT_OUTER)
-        #     .where(Booking.account_id == person.id))
-        # return render_template('bookings.html', account=session.get('username'), received=received, requested=requested)
-
         person = Account.get(Account.username==session.get('username'))
         listings = Listing.select().where(Listing.account_id==person.id)
-        numbers = [listing.id for listing in listings]
-        received = Booking.select().where(Booking.listing_id << numbers)
+
+        received = Booking.select().where(Booking.listing_id << [listing.id for listing in listings])
+        received_names = {booking.listing_id: listing.name for booking, listing in zip(received, listings)}
+
         requested = Booking.select().where(Booking.account_id == person.id)
-        return render_template('bookings.html', account=session.get('username'), received=received, requested=requested)
+        other_listings = []
+        for booking in requested:
+            other_listings.append(Listing.get(Listing.id == booking.listing_id))
+        requested_names = {booking.listing_id: listing.name for booking, listing in zip(requested, other_listings)}
 
-
+        return render_template('bookings.html', account=session.get('username'), received=received, received_names=received_names, requested=requested, requested_names=requested_names)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
