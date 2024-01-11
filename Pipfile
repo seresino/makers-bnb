@@ -12,6 +12,11 @@ pytest-xprocess = "*"
 py = "*"
 peewee = "*"
 psycopg2 = "*"
+wtforms = "*"
+sqlalchemy = "*"
+email-validator = "*"
+playwright = "*"
+flask-bcrypt = "*"
 
 [dev-packages]
 autopep8 = "*"

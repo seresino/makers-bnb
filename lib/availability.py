@@ -13,7 +13,6 @@ class Availability(Model):
     start_date = DateField()
     end_date = DateField()
     available = BooleanField()
-    requested = BooleanField()
 
     class Meta:
         database = db 
