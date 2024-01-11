@@ -207,6 +207,16 @@ def get_listing(id):
                     available=True
                 )
                 new_availability.save()
+            
+            else:
+                new_booking_request = Booking.create(
+                    listing_id = individual_listing,
+                    account_id = logged_in_user,
+                    start_date = start_date,
+                    end_date = end_date,
+                    status = 'requested'
+                )
+                new_booking_request.save()
 
             return redirect(url_for('get_listing', id=id))
 
@@ -232,6 +242,7 @@ def get_listing(id):
     # # Convert the list to a JSON object
     availability_json = json.dumps(availability_data)
     return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
+
 
 @app.route('/listings/<int:listing_id>/bookings/<int:booking_id>', methods=['POST'])
 def handle_booking_action(listing_id, booking_id):
