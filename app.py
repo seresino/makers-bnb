@@ -210,15 +210,15 @@ def get_listing(id):
 
             return redirect(url_for('get_listing', id=id))
 
-        # Check if there are pending booking requests for this listing
-        pending_requests = Booking.select().where(
-            (Booking.listing_id == individual_listing.id) &
-            (Booking.status == 'Requested')
-        )
+        # # Check if there are pending booking requests for this listing
+        # pending_requests = Booking.select().where(
+        #     (Booking.listing_id == individual_listing.id) &
+        #     (Booking.status == 'Requested')
+        # )
 
-        return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user,
-                            account=session.get('username'), availabilities=availabilities,
-                            pending_requests=pending_requests)
+        # return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user,
+        #                     account=session.get('username'), availabilities=availabilities,
+        #                     pending_requests=pending_requests)
 
     availability_data = []
     for availability in availabilities:
