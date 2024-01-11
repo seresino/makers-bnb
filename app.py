@@ -205,6 +205,16 @@ def get_listing(id):
                     available=True
                 )
                 new_availability.save()
+            
+            else:
+                new_booking_request = Booking.create(
+                    listing_id = individual_listing,
+                    account_id = logged_in_user,
+                    start_date = start_date,
+                    end_date = end_date,
+                    status = 'requested'
+                )
+                new_booking_request.save()
 
             return redirect(url_for('get_listing', id=id))
 
