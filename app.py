@@ -190,6 +190,21 @@ def get_listing(id):
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
     # Create a list to hold the availability data as dictionaries
     
+    if request.method == 'POST':
+        available_start = request.form['available-start']
+        available_end = request.form['available-end']
+        print("available-start", available_start)
+
+        new_availability = Availability.create(
+            listing_id=individual_listing,
+            start_date=available_start,
+            end_date = available_end,
+            available=True
+        )
+        new_availability.save()
+
+        return redirect(url_for('get_listing', id=id))
+
     availability_data = []
     for availability in availabilities:
         if availability.available == True:
