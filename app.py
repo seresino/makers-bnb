@@ -216,18 +216,23 @@ def get_listing(id):
                     flash("Availability updated", 'sucess')
         
                 else:
-                    flash("Overlaps with existing availability, Try again", 'error')
+                    flash("Overlaps with existing availability", 'error')
 
             else:
-                new_booking_request = Booking.create(
-                    listing_id = individual_listing,
-                    account_id = logged_in_user,
-                    start_date = start_date,
-                    end_date = end_date,
-                    status = 'requested'
-                )
-                new_booking_request.save()
-                flash("Booking requested", 'success')
+
+                if check_requested_booking_availability(availabilities, start_date, end_date):
+                    new_booking_request = Booking.create(
+                        listing_id = individual_listing,
+                        account_id = logged_in_user,
+                        start_date = start_date,
+                        end_date = end_date,
+                        status = 'requested'
+                    )
+                    new_booking_request.save()
+                    flash("Booking requested", 'success')
+                else:
+                    flash("Property not avilable for given dates", 'error')
+
 
             return redirect(url_for('get_listing', id=id))
 
