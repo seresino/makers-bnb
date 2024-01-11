@@ -150,6 +150,7 @@ def add_space():
     if session.get('username') == None:
         return redirect('/login')
     else:
+        
         if form.validate_on_submit():
             name = form.name.data
             address = form.address.data

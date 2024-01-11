@@ -20,5 +20,5 @@ class AddListingForm(FlaskForm):
     name = StringField('Name', [InputRequired()])
     address = StringField('Address', [InputRequired()])
     description = StringField('Description', [InputRequired()])
-    price = StringField('Price', [InputRequired()]) 
+    price = IntegerField('Price', [InputRequired()]) 
     submit = SubmitField("Add Space")
