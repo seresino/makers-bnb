@@ -160,6 +160,7 @@ def test_get_listing(page, test_web_address, db_connection):
     address = page.locator(".address")
     expect(address).to_have_text("Address: 145 JohnD lane, London")
 
+
 '''
 When we signup with correct username, first and last names, phone and password, but wrong email
 error message display
@@ -178,4 +179,5 @@ def test_sign_up_with_correct_details(page, test_web_address, db_connection):
     heading_tag = page.locator("h1")
     error_message = page.locator(".t-errors")
     expect(error_message).to_have_text("Invalid email address.")
+
 

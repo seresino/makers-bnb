@@ -204,6 +204,7 @@ def get_listing(id):
     return render_template('show.html', listing=individual_listing, account=session.get('username'), availability_json=availability_json)
 
 
+
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
 # if started in test mode.
