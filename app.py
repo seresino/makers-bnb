@@ -6,9 +6,6 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
-from flask_wtf import FlaskForm
-from wtforms import Form, StringField, PasswordField, SubmitField, validators, IntegerField
-from wtforms.validators import Regexp, ValidationError, InputRequired, Email
 from sqlalchemy.exc import IntegrityError
 from lib.availability import *
 import json
@@ -16,6 +13,7 @@ from flask_bcrypt import Bcrypt
 from lib.booking import *
 from datetime import datetime
 from utils import *
+from forms import *
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -35,27 +33,6 @@ db = PostgresqlDatabase(
     password='',  # Your PostgreSQL password
     host='localhost'  # Your PostgreSQL host
 )
-
-class SignupForm(FlaskForm):
-    username = StringField('Username', [InputRequired()])
-    firstname = StringField('First Name', [InputRequired()])
-    lastname = StringField('Last Name', [InputRequired(message='Last name cannot be blank.')])
-    email = StringField('Email', [InputRequired(), Email(message='Invalid email address.')])
-    phone = StringField('Phone', [InputRequired(), Regexp(r'^\d{11}$', message='Phone number must be 11 digits')])
-    password = PasswordField('Password', [InputRequired()])
-    submit = SubmitField("Sign Up")
-
-class LoginForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired()])
-    password = PasswordField('password', validators=[InputRequired()])
-    submit = SubmitField("Login")
-
-class AddListingForm(FlaskForm):
-    name = StringField('Name', [InputRequired()])
-    address = StringField('Address', [InputRequired()])
-    description = StringField('Description', [InputRequired()])
-    price = StringField('Price', [InputRequired()]) 
-    submit = SubmitField("Add Space")
 
 # Initialize the database connection in the Flask app context
 @app.before_request
@@ -247,8 +224,6 @@ def get_listing(id):
                     flash("Booking requested", 'success')
                 else:
                     flash("Property not avilable for given dates", 'error')
-
-
 
             return redirect(url_for('get_listing', id=id))
     
