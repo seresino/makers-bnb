@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, redirect, session, url_for
+from flask import Flask, request, render_template, redirect, session, url_for, flash
 from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
@@ -14,7 +14,8 @@ from lib.availability import *
 import json
 from flask_bcrypt import Bcrypt
 from lib.booking import *
-
+from datetime import datetime
+from utils import *
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -65,6 +66,8 @@ def before_request():
 def after_request(response):
     db.close()
     return response
+
+
 
 # == Your Routes Here ==
 
@@ -185,27 +188,36 @@ def add_space():
 
 @app.route('/listings/<int:id>', methods=['GET', 'POST'])
 def get_listing(id):
+
     individual_listing = Listing.get(Listing.id == id)
     
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
     
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
-        print(logged_in_user)
-        
+    else:
+        logged_in_user = False
         if request.method == 'POST':
             start_date = request.form['start-date']
             end_date = request.form['end-date']
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
             if logged_in_user.id == individual_listing.account_id:
 
-                new_availability = Availability.create(
+                if not check_availability_overlap(availabilities, start_date, end_date):
+                    new_availability = Availability.create(
                     listing_id=individual_listing,
                     start_date=start_date,
                     end_date = end_date,
                     available=True
                 )
-                new_availability.save()
-            
+                    new_availability.save()
+                    flash("Availability updated", 'sucess')
+        
+                else:
+                    flash("Overlaps with existing availability, Try again", 'error')
+
             else:
                 new_booking_request = Booking.create(
                     listing_id = individual_listing,
@@ -215,6 +227,7 @@ def get_listing(id):
                     status = 'requested'
                 )
                 new_booking_request.save()
+                flash("Booking requested", 'success')
 
             return redirect(url_for('get_listing', id=id))
 
@@ -229,6 +242,7 @@ def get_listing(id):
     
     # # Convert the list to a JSON object
     availability_json = json.dumps(availability_data)
+
     return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
 
 @app.route('/bookings', methods=['GET'])
