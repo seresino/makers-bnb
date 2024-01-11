@@ -188,14 +188,15 @@ def add_space():
 
 @app.route('/listings/<int:id>', methods=['GET', 'POST'])
 def get_listing(id):
-    message = ""
+
     individual_listing = Listing.get(Listing.id == id)
     
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
     
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
-        
+    else:
+        logged_in_user = False
         if request.method == 'POST':
             start_date = request.form['start-date']
             end_date = request.form['end-date']
@@ -241,7 +242,7 @@ def get_listing(id):
     
     # # Convert the list to a JSON object
     availability_json = json.dumps(availability_data)
-    print(message)
+
     return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
 
 @app.route('/bookings', methods=['GET'])
