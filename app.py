@@ -52,7 +52,7 @@ class AddListingForm(FlaskForm):
     name = StringField('Name', [InputRequired()])
     address = StringField('Address', [InputRequired()])
     description = StringField('Description', [InputRequired()])
-    price = StringField('Description', [InputRequired()]) 
+    price = IntegerField('Description', [InputRequired()]) 
     submit = SubmitField("Add Space")
 
 # Initialize the database connection in the Flask app context
