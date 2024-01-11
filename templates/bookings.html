@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+    <h1>Bookings</h1>
+    <p class="user">
+        Hello, {{ account }}!
+    </p>
+
+    <div class="receieved">
+        Here are the bookings your properties have received:
+        {% for booking in received %}
+        <ul>
+            <li>
+            {{ booking.listing_id }}<br>
+            {{ booking.start_date }}<br> 
+            {{ booking.end_date }}<br> 
+            {{ booking.status }}<br><br>
+            </li>
+        </ul>
+        {% endfor %}
+    </div>
+    <div class="requested">
+        Here are your requested bookings for other properties:
+        {% for booking in requested %}
+        <ul>
+            <li>
+            {{ booking.listing_id }}<br>
+            {{ booking.start_date }}<br> 
+            {{ booking.end_date }}<br> 
+            {{ booking.status }}<br><br>
+            </li>
+        </ul>
+        {% endfor %}
+    </div>
+        
+{% endblock %}

@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from lib.availability import *
 import json
 from flask_bcrypt import Bcrypt
+from lib.booking import *
 
 
 # Create a new Flask app
@@ -202,6 +203,33 @@ def get_listing(id):
     # # Convert the list to a JSON object
     availability_json = json.dumps(availability_data)
     return render_template('show.html', listing=individual_listing, account=session.get('username'), availability_json=availability_json)
+
+@app.route('/bookings', methods=['GET'])
+def get_bookings():
+    if session.get('username') == None:
+        return redirect('/login')
+    else:
+        # TBC
+        # person = Account.get(Account.username==session.get('username'))
+        # listings = Listing.select().where(Listing.account_id==person.id)
+        # numbers = [listing.id for listing in listings]
+        # received = (Booking
+        #     .select(Booking, Listing.name)
+        #     .join(Listing, on=(Booking.listing_id == Listing.id), join_type=JOIN.LEFT_OUTER)
+        #     .where(Booking.listing_id << numbers))
+        
+        # requested = (Booking
+        #     .select(Booking, Listing.name)
+        #     .join(Listing, on=(Booking.listing_id == Listing.id), join_type=JOIN.LEFT_OUTER)
+        #     .where(Booking.account_id == person.id))
+        # return render_template('bookings.html', account=session.get('username'), received=received, requested=requested)
+
+        person = Account.get(Account.username==session.get('username'))
+        listings = Listing.select().where(Listing.account_id==person.id)
+        numbers = [listing.id for listing in listings]
+        received = Booking.select().where(Booking.listing_id << numbers)
+        requested = Booking.select().where(Booking.account_id == person.id)
+        return render_template('bookings.html', account=session.get('username'), received=received, requested=requested)
 
 
 
