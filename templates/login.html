@@ -7,29 +7,20 @@
 {% endblock %}
 
 {% block content %}
-      <!-- This creates a form that will submit to POST /login -->
-  <form action="/login" method="post">
 
-    <!-- We check to see if there are any errors from a previous submission -->
-    {% if error %}
-        <p class="t-errors">
-            {{ error }}
-        </p>
-    {% endif %}
+{% if error_message %}
+  <p style="color: red;">{{ error_message }}</p>
+{% endif %}
 
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    
     <p>
-        <label for="email">Email</label>
-        <input type="text" name="email" id="email">
+      Email {{ form.email(id='emailField') }}<br>
     </p>
     <p>
-        <label for="password">Password</label>
-        <input type="text" name="password" id="password">
+      Password {{ form.password(id='passwordField') }}<br>
     </p>
-    <p>
-        <!-- `type` is submit here, to indicate it is a button -->
-        <!-- `value` is used as the button's text -->
-        <input type="submit" value="Log On">
-    </p>
+    <p>{{ form.submit(id='submitField') }}</p>
   </form>
-
-  {% endblock %}
+{% endblock %}

@@ -10,21 +10,38 @@
     
     <!-- Add a div element to contain the calendar -->
     <div id="calendar"></div>
+    <div id="availability-data" data-availability="{{ availability_json | tojson | safe }}"></div>
     <br>
     <a href="">Book</a>
     <!-- Include the FullCalendar library and initialize the calendar -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-                
+
             // Initialize FullCalendar with the events data
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+                initialView: 'Month',
+                // headerToolbar: { center: 'Month,SixMonth' },
+                views: {
+                    Month: { // name of view
+                    type: 'dayGridMonth',
+                    // other view-specific options here
+                    },
+                    SixMonth: {
+                    type: 'multiMonth',
+                    duration: { months: 6 }
+                    }
+                },
+                buttonText: {
+                    today:    'Today',
+                    month:    'Month'
+                },
                 selectable: true,
-                events: {{ availability_json | safe }}
+                events: {{ availability_json | safe }},
+                eventDisplay: 'background'
             });
-
             calendar.render();
+            
         });
     </script>
     <br>
