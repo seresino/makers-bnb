@@ -27,19 +27,38 @@
             calendar.render();
         });
     </script>
-    <form method='POST'>
-        <br>
-        <p>
-            Add Availability
-        </p>
-        <label for="availability-start">Start date:</label>
-        <input type="date" id="start" name="available-start" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
-        <br>
-        <label for="availability-end">End date:</label>
-        <input type="date" id="end" name="available-end" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
-        <p>
-            <button>Submit Availability</button>
-        </p>
-    </form>
+    
+    {% if listing.id == logged_in_user.id %}
+        <form method='POST'>
+            <br>
+            <p>
+                Add Availability
+            </p>
+            <label for="availability-start">Start date:</label>
+            <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <br>
+            <label for="availability-end">End date:</label>
+            <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <p>
+                <button>Submit Availability</button>
+            </p>
+        </form>
+    
+    {% else %}
+        <form method='POST'>
+            <br>
+            <p>
+                Request to book
+            </p>
+            <label for="start">Start date:</label>
+            <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <br>
+            <label for="end">End date:</label>
+            <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+            <p>
+                <button>Submit Request</button>
+            </p>
+        </form>
+    {% endif %}
         
 {% endblock %}
