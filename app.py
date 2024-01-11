@@ -188,6 +188,17 @@ def get_listing(id):
     individual_listing = Listing.get(Listing.id == id)
     
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
+    availability_data = []
+    for availability in availabilities:
+        if availability.available == True:
+            availability_data.append({
+                'title': 'Available',
+                'start': availability.start_date.isoformat(),  # Convert to ISO format
+                'end': availability.end_date.isoformat(),      # Convert to ISO format
+            })
+    
+    # # Convert the list to a JSON object
+    availability_json = json.dumps(availability_data)
     
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
@@ -217,48 +228,29 @@ def get_listing(id):
                 new_booking_request.save()
 
             return redirect(url_for('get_listing', id=id))
+        else:
+            return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
 
-    availability_data = []
-    for availability in availabilities:
-        if availability.available == True:
-            availability_data.append({
-                'title': 'Available',
-                'start': availability.start_date.isoformat(),  # Convert to ISO format
-                'end': availability.end_date.isoformat(),      # Convert to ISO format
-            })
-    
-    # # Convert the list to a JSON object
-    availability_json = json.dumps(availability_data)
-    return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
+    return render_template('show.html', listing=individual_listing, account=session.get('username'), availability_json=availability_json)
 
 @app.route('/bookings', methods=['GET'])
 def get_bookings():
     if session.get('username') == None:
         return redirect('/login')
     else:
-        # TBC
-        # person = Account.get(Account.username==session.get('username'))
-        # listings = Listing.select().where(Listing.account_id==person.id)
-        # numbers = [listing.id for listing in listings]
-        # received = (Booking
-        #     .select(Booking, Listing.name)
-        #     .join(Listing, on=(Booking.listing_id == Listing.id), join_type=JOIN.LEFT_OUTER)
-        #     .where(Booking.listing_id << numbers))
-        
-        # requested = (Booking
-        #     .select(Booking, Listing.name)
-        #     .join(Listing, on=(Booking.listing_id == Listing.id), join_type=JOIN.LEFT_OUTER)
-        #     .where(Booking.account_id == person.id))
-        # return render_template('bookings.html', account=session.get('username'), received=received, requested=requested)
-
         person = Account.get(Account.username==session.get('username'))
         listings = Listing.select().where(Listing.account_id==person.id)
-        numbers = [listing.id for listing in listings]
-        received = Booking.select().where(Booking.listing_id << numbers)
+
+        received = Booking.select().where(Booking.listing_id << [listing.id for listing in listings])
+        received_names = {booking.listing_id: listing.name for booking, listing in zip(received, listings)}
+
         requested = Booking.select().where(Booking.account_id == person.id)
-        return render_template('bookings.html', account=session.get('username'), received=received, requested=requested)
+        other_listings = []
+        for booking in requested:
+            other_listings.append(Listing.get(Listing.id == booking.listing_id))
+        requested_names = {booking.listing_id: listing.name for booking, listing in zip(requested, other_listings)}
 
-
+        return render_template('bookings.html', account=session.get('username'), received=received, received_names=received_names, requested=requested, requested_names=requested_names)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database

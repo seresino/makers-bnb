@@ -1,38 +1,43 @@
 {% extends 'base.html' %}
-
+{% block headings %} 
+<h1>Bookings</h1>
+{% endblock %}
 
 
 {% block content %}
-    <h1>Bookings</h1>
-    <p class="user">
-        Hello, {{ account }}!
-    </p>
 
-    <div class="receieved">
-        Here are the bookings your properties have received:
-        {% for booking in received %}
-        <ul>
-            <li>
-            {{ booking.listing_id }}<br>
-            {{ booking.start_date }}<br> 
-            {{ booking.end_date }}<br> 
-            {{ booking.status }}<br><br>
-            </li>
-        </ul>
-        {% endfor %}
-    </div>
-    <div class="requested">
-        Here are your requested bookings for other properties:
-        {% for booking in requested %}
-        <ul>
-            <li>
-            {{ booking.listing_id }}<br>
-            {{ booking.start_date }}<br> 
-            {{ booking.end_date }}<br> 
-            {{ booking.status }}<br><br>
-            </li>
-        </ul>
-        {% endfor %}
+
+    <div class="content">
+        <p class="user">
+            Hello, {{ account }}!
+        </p>
+        <br>
+        <div class="split-bookings">
+            <div class="bookings">
+                <h4>Received Requests</h4>
+                <br>
+                {% for booking in received %}
+                    <div>
+                        <p>{{ received_names.get(booking.listing_id) }}</p>
+                        <p>Check In: {{ booking.start_date }}</p>
+                        <p>Check Out: {{ booking.end_date }}</p>
+                        <p>Status: {{ booking.status }}</p><br>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="bookings">
+                <h4>Sent Requests</h4>
+                <br>
+                {% for booking in requested %}
+                    <div>
+                        <p>{{ requested_names.get(booking.listing_id) }}</p>
+                        <p>Check In: {{ booking.start_date }}</p>
+                        <p>Check Out: {{ booking.end_date }}</p>
+                        <p>Status: {{ booking.status }}</p><br>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
         
 {% endblock %}

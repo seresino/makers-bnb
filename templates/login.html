@@ -9,18 +9,24 @@
 {% block content %}
 
 {% if error_message %}
-  <p style="color: red;">{{ error_message }}</p>
+  <p class="t-errors">{{ error_message }}</p>
 {% endif %}
 
+<div class="content">
   <form method="POST" action="">
     {{ form.hidden_tag() }}
-    
-    <p>
-      Email {{ form.email(id='emailField') }}<br>
-    </p>
-    <p>
-      Password {{ form.password(id='passwordField') }}<br>
-    </p>
-    <p>{{ form.submit(id='submitField') }}</p>
+    <div class="form-input">
+      <p class="label">Email</p>
+      <p class="input-box">{{ form.email(id='emailField') }}</p>
+    </div>
+    <div class="form-input">
+      <p class="label">Password</p>
+      <p class="input-box">{{ form.password(id='passwordField') }}</p>
+    </div>
+    <div class="button">
+      {{ form.submit(id='submitField') }}
+    </div>
   </form>
+</div>
+  
 {% endblock %}
