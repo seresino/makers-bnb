@@ -21,7 +21,7 @@ CREATE TABLE account (
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     email VARCHAR(255),
-    password VARCHAR(255),
+    password VARCHAR(255) NOT NULL,
     phone_number VARCHAR(255)
 );
 
@@ -29,9 +29,9 @@ CREATE SEQUENCE IF NOT EXISTS listing_id_seq;
 CREATE TABLE listing (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    address VARCHAR(255),
+    address VARCHAR(255) NOT NULL,
     description VARCHAR(255),
-    price INT,
+    price INT NOT NULL,
     account_id INT,
     CONSTRAINT fk_account FOREIGN KEY(account_id) REFERENCES account(id) ON DELETE CASCADE
 );
@@ -42,8 +42,20 @@ CREATE TABLE availability (
     listing_id INT NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    available BOOLEAN NOT NULL, -- status can be 'available, 'booked', 'requested' etc.
+    available BOOLEAN NOT NULL,
     CONSTRAINT fk_listing FOREIGN KEY (listing_id) REFERENCES listing(id) ON DELETE CASCADE
+);
+
+CREATE SEQUENCE IF NOT EXISTS booking_id_seq;
+CREATE TABLE booking (
+    id SERIAL PRIMARY KEY,
+    listing_id INT NOT NULL,
+    account_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_listing_listing FOREIGN KEY (listing_id) REFERENCES listing(id) ON DELETE CASCADE,
+    CONSTRAINT fk_listing_account FOREIGN KEY (account_id) REFERENCES account(id) ON DELETE CASCADE
 );
 
 
@@ -76,4 +88,10 @@ VALUES
     (5, '2024-02-15', '2024-02-18', true),
     (2, '2024-02-10', '2024-02-11', true);
 
-
+INSERT INTO booking (listing_id, account_id, start_date, end_date, status)
+VALUES
+    (1, 2, '2024-02-10', '2024-02-15', 'Confirmed'),
+    (1, 5, '2024-02-15', '2024-02-19', 'Requested'),
+    (1, 3, '2024-02-10', '2024-02-12', 'Denied'),
+    (2, 1, '2024-02-02', '2024-02-04', 'Requested'),
+    (3, 1, '2024-02-21', '2024-02-27', 'Confirmed');
