@@ -6,8 +6,9 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
-from wtforms import Form, StringField, validators
-from wtforms.validators import Regexp, ValidationError
+from flask_wtf import FlaskForm
+from wtforms import Form, StringField, PasswordField, SubmitField, validators
+from wtforms.validators import Regexp, ValidationError, InputRequired, Email
 from sqlalchemy.exc import IntegrityError
 from lib.availability import *
 import json
@@ -33,13 +34,26 @@ db = PostgresqlDatabase(
     host='localhost'  # Your PostgreSQL host
 )
 
-class SignupForm(Form):
-    username = StringField('Username', [validators.InputRequired(message='Username cannot be blank.')])
-    firstname = StringField('First Name', [validators.InputRequired(message='First Name cannot be blank.')])
-    lastname = StringField('Last Name', [validators.InputRequired(message='Last name cannot be blank.')])
-    email = StringField('Email', [validators.InputRequired(message='Email is required.'), validators.Email(message='Invalid email address.')])
-    phone = StringField('Phone', [validators.InputRequired(message='Phone number is required'), Regexp(r'^\d{10}$', message='Phone number must be 10 digits')])
-    password = StringField('Password', [validators.InputRequired(message='Password cannot be blank.')])
+class SignupForm(FlaskForm):
+    username = StringField('Username', [InputRequired()])
+    firstname = StringField('First Name', [InputRequired()])
+    lastname = StringField('Last Name', [InputRequired(message='Last name cannot be blank.')])
+    email = StringField('Email', [InputRequired(), Email(message='Invalid email address.')])
+    phone = StringField('Phone', [InputRequired(), Regexp(r'^\d{11}$', message='Phone number must be 11 digits')])
+    password = PasswordField('Password', [InputRequired()])
+    submit = SubmitField("Sign Up")
+
+class LoginForm(FlaskForm):
+    email = StringField('email', validators=[InputRequired()])
+    password = PasswordField('password', validators=[InputRequired()])
+    submit = SubmitField("Login")
+
+class AddListingForm(FlaskForm):
+    name = StringField('Name', [InputRequired()])
+    address = StringField('Address', [InputRequired()])
+    description = StringField('Description', [InputRequired()])
+    price = StringField('Description', [InputRequired()]) 
+    submit = SubmitField("Add Space")
 
 # Initialize the database connection in the Flask app context
 @app.before_request
@@ -74,8 +88,8 @@ def get_signup():
 
 @app.route('/signup', methods=['POST'])
 def post_signup():
-    form = SignupForm(request.form)
-    if form.validate():
+    form = SignupForm()
+    if form.validate_on_submit():
         # Form is valid, proceed with creating the account
         username = form.username.data
         firstname = form.firstname.data
@@ -111,34 +125,37 @@ def post_signup():
         return render_template('signup.html', form=form)
 
 
-@app.route('/login', methods=['GET'])
-def get_login():
-    if session.get('username') != None:
-        return redirect('/')
-    else:
-        return render_template('login.html')
+# @app.route('/login', methods=['GET'])
+# def get_login():
+#     if session.get('username') != None:
+#         return redirect('/')
+#     else:
+#         return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
-def post_login():
-    email = request.form['email']
-    password = request.form['password']
-    try:
-        accounts = Account.select().where(Account.email == email)
-        if accounts.exists(): 
-            if accounts[0].password == password or bcrypt.check_password_hash(accounts[0].password, password):
-                account = accounts[0]
-                session.permanent = True
-                session['username'] = account.username
-                return redirect('/')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    error_message=None
+    if form.validate_on_submit():
+        print(form.errors)
+        try:
+            account = Account.select().where(Account.email == form.email.data).first()
+            if account: 
+                if account.password == form.password.data or bcrypt.check_password_hash(account.password, form.password.data):
+                    account = account
+                    session.permanent = True
+                    session['username'] = account.username
+                    return redirect('/')
+                else:
+                    error_message = "Incorrect password. Please try again."
             else:
-                error_message = "Incorrect password. Please try again."
-        else:
-            error_message = "User not found. Please check your email."
-    except Account.DoesNotExist:
-        error_message = "An error occurred during login. Please try again."
-
-    # Pass the error message to the template and render the login page
-    return render_template('login.html', error=error_message)
+                error_message = "User not found. Please try again."
+        except Account.DoesNotExist:
+            error_message = "An error occurred during login. Please try again."
+    else:
+        if session.get('username') != None:
+            return redirect('/')
+    return render_template('login.html', form=form, error_message=error_message)
 
 @app.route('/logout', methods=['GET'])
 def logout():
@@ -146,29 +163,26 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
-@app.route('/add-space', methods=['GET'])
+@app.route('/add-space', methods=['GET', 'POST'])
 def add_space():
-    if session.get('username') == None:
-        return redirect('/login')
-    return render_template('add_listing.html', account=session.get('username'))
-
-@app.route('/', methods=['POST'])
-def post_listing():
+    form = AddListingForm()
     if session.get('username') == None:
         return redirect('/login')
     else:
-        name = request.form['name']
-        address = request.form['address']
-        description = request.form['description']
-        price = request.form['price']
+        if form.validate_on_submit():
+            name = form.name.data
+            address = form.address.data
+            description = form.description.data
+            price = form.price.data
 
-        person = Account.get(Account.username==session.get('username'))
-        listing = Listing(name=name, address=address, description=description, price=price, account=person)
-        listing.save()
-        listings = Listing.select()
-        return redirect(f"/listings/{listing.id}")
+            person = Account.get(Account.username==session.get('username'))
+            listing = Listing(name=name, address=address, description=description, price=price, account=person)
+            listing.save()
+            return redirect(f"/listings/{listing.id}")
+    return render_template('add_listing.html', account=session.get('username'), form=form)
 
-@app.route('/listings/<int:id>', methods=['GET'])
+
+@app.route('/listings/<int:id>', methods=['GET', 'POST'])
 def get_listing(id):
     individual_listing = Listing.get(Listing.id == id)
     

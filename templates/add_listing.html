@@ -7,29 +7,27 @@
 {% endblock %}
 
 {% block content %} 
-  <form action="/" method="POST">
-      <p>
-      <label for="name">Name</label>
-      <br>
-      <input type="text" name="name" id="name">
-      </p>
-      <p>
-      <label for="address">Address</label>
-      <br>
-      <input type="text" name="address" id="address">
-      </p>
-      <p>
-      <label for="description">Description</label>
-      <br>
-      <input type="text" name="description" id="description">
-      </p>
-      <p>
-      <label for="price">Price</label>
-      <br>
-      <input type="number" name="price" id="price">
-      </p>
-      <p>
-      <input type="submit" value="Add space">
-      </p>
+  <form method="POST", action="">
+    {{ form.hidden_tag() }}
+
+    <p>
+      Name
+      {{ form.name(id='nameField') }}
+    </p>
+    <p>
+      Address
+      {{ form.address(id='addressField') }}
+    </p>
+    <p>
+      Description
+      {{ form.description(id='descriptionField') }}
+    </p>
+    <p>
+      Price Per Night
+      {{ form.price(id='priceField') }}
+    </p>
+    <p>
+      {{ form.submit(id='submitField') }}
+    </p>
   </form>
 {% endblock %}
