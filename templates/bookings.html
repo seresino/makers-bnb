@@ -1,38 +1,43 @@
 {% extends 'base.html' %}
 
-
-
 {% block content %}
     <h1>Bookings</h1>
     <p class="user">
         Hello, {{ account }}!
     </p>
 
-    <div class="receieved">
+    <div class="received">
         Here are the bookings your properties have received:
         {% for booking in received %}
-        <ul>
-            <li>
-            {{ booking.listing_id }}<br>
-            {{ booking.start_date }}<br> 
-            {{ booking.end_date }}<br> 
-            {{ booking.status }}<br><br>
-            </li>
-        </ul>
+        <form method="POST" action="{{ url_for('handle_booking_action', listing_id=booking.listing_id.id, booking_id=booking.id) }}">
+            <ul>
+                <li>
+                    Listing ID: {{ booking.listing_id.id }}<br>
+                    Start Date: {{ booking.start_date }}<br> 
+                    End Date: {{ booking.end_date }}<br> 
+                    Status: {{ booking.status }}<br><br>
+
+                    {% if booking.status == 'requested' %}
+                        <button type="submit" name="action" value="accept" class="accept">Approve</button>
+                        <button type="submit" name="action" value="deny" class="deny">Deny</button>
+                    {% endif %}
+                </li>
+            </ul>
+        </form>
         {% endfor %}
     </div>
+
     <div class="requested">
         Here are your requested bookings for other properties:
         {% for booking in requested %}
         <ul>
             <li>
-            {{ booking.listing_id }}<br>
-            {{ booking.start_date }}<br> 
-            {{ booking.end_date }}<br> 
-            {{ booking.status }}<br><br>
+                Listing ID: {{ booking.listing_id.id }}<br>
+                Start Date: {{ booking.start_date }}<br> 
+                End Date: {{ booking.end_date }}<br> 
+                Status: {{ booking.status }}<br><br>
             </li>
         </ul>
         {% endfor %}
     </div>
-        
 {% endblock %}
