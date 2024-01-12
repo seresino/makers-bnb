@@ -124,8 +124,12 @@ main {
   margin-bottom: 50px;
 }
 
-
 /* signup.html */
 .t-errors {
   color: red;
+}
+.flash-messages {
+  text-align: center;
+  font-style: italic;
+  color: rgb(238, 108, 108)
 }
