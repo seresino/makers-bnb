@@ -14,12 +14,15 @@ from lib.booking import *
 from datetime import datetime
 from utils import *
 from forms import *
+from twilio.rest import Client
 
 # Create a new Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a7sk21'
 bcrypt = Bcrypt(app)
 app.permanent_session_lifetime = timedelta(minutes=120)
+
+
 
 # Environment variables
 load_dotenv()
@@ -171,6 +174,7 @@ def get_listing(id):
     logged_in_user=False
 
     individual_listing = Listing.get(Listing.id == id)
+    listing_owner = Account.get(Account.id == individual_listing.account_id)
     
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
     availability_data = []
@@ -223,6 +227,9 @@ def get_listing(id):
                     )
                     new_booking_request.save()
                     flash("Booking requested", 'success')
+                    
+                    message = f"Hello, Your property {individual_listing.name}, has been requested from {start_date} to {end_date}. Please login to your account to manage this request. Thanks MakersBnB"
+                    send_request_sms(os.getenv('TWILIO_PHONE_NUMBER'), '447590395227', message)
                 else:
                     flash("Property not avilable for given dates", 'error')
 

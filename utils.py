@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+from twilio.rest import Client
+
 """
 check that new availability does not overlap with any existing available date ranges for that listing
 """
@@ -28,3 +32,31 @@ def check_requested_booking_availability(availabilities, requested_start_date, r
             return True
     
     return False
+
+"""
+send sms to owner of a listing when there property has been requested
+"""
+
+def send_request_sms(twilio_num, recipitent_num, message):
+    load_dotenv()
+    client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
+    message = client.messages.create(
+        body = message,
+        from_ = twilio_num,
+        to = recipitent_num
+    )
+    return None
+
+"""
+send sms to requesting user when there request has been dealt with (approved, denied etc)
+"""
+
+# def send_request_outcome_sms(twilio_num, recipitent_num, message):
+#     load_dotenv()
+#     client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
+#     message = client.messages.create(
+#         body = message,
+#         from_ = twilio_num,
+#         to = recipitent_num
+#     )
+#     return None
