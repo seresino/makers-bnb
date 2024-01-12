@@ -14,12 +14,15 @@ from lib.booking import *
 from datetime import datetime
 from utils import *
 from forms import *
+from twilio.rest import Client
 
 # Create a new Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a7sk21'
 bcrypt = Bcrypt(app)
 app.permanent_session_lifetime = timedelta(minutes=120)
+
+
 
 # Environment variables
 load_dotenv()
@@ -171,6 +174,7 @@ def get_listing(id):
     logged_in_user=False
 
     individual_listing = Listing.get(Listing.id == id)
+    listing_owner = Account.get(Account.id == individual_listing.account_id)
     
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
     availability_data = []
@@ -219,10 +223,13 @@ def get_listing(id):
                         account_id = logged_in_user,
                         start_date = start_date,
                         end_date = end_date,
-                        status = 'requested'
+                        status = 'Requested'
                     )
                     new_booking_request.save()
                     flash("Booking requested", 'success')
+                    
+                    message = f"Hello {listing_owner.first_name}, Your property {individual_listing.name} has been requested from {start_date} to {end_date}. Please login to your account to manage this request. Thanks MakersBnB"
+                    send_request_sms(os.getenv('TWILIO_PHONE_NUMBER'), '447590395227', message)
                 else:
                     flash("Property not avilable for given dates", 'error')
 
@@ -256,6 +263,7 @@ def handle_booking_action(listing_id, booking_id):
         return redirect(url_for('get_listing', id=listing_id))
 
     booking = Booking.get(Booking.id == booking_id)
+    booking_user = Account.get(Account.id == booking.account_id)
 
     # Update the status of the booking based on the action
     action = request.form.get('action')
@@ -265,7 +273,8 @@ def handle_booking_action(listing_id, booking_id):
         remove_availability(booking)
     elif action == 'deny':
         booking.status = 'Denied'
-
+    message = f"Hello {booking_user.first_name}, your request for {listing.name} has been {booking.status}. Please login to your account for further details. Thanks MakersBnB"
+    send_request_outcome_sms(os.getenv('TWILIO_PHONE_NUMBER'), '447590395227', message)
     booking.save()
 
     return redirect(url_for('get_listing', id=listing_id))
