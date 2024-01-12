@@ -24,7 +24,7 @@ def check_requested_booking_availability(availabilities, requested_start_date, r
         start_date = availability.start_date
         end_date = availability.end_date
 
-        if requested_start_date <= end_date and requested_end_date >= start_date:
+        if (start_date <= requested_start_date <= end_date) and (start_date <= requested_end_date <= end_date):
             return True
     
     return False
