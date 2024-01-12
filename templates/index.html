@@ -26,12 +26,12 @@
     <li>
       <a href='/listings/{{listing.id}}'>{{ listing.name }}</a><br>
       {{ listing.address }}<br>
-      {{ listing.description }}<br> 
+      £{{ listing.price }}<br>
       £{{ listing.price }}<br>
       {% if listing.image_filename %}
-          <img src="{{ url_for('uploaded_file', filename=listing.image_filename) }}" alt="Listing Image" width="200">
-        {% endif %}
-        <br><br>
+        <img src="{{ url_for('uploaded_file', filename=listing.image_filename) }}" alt="Listing Image" width="200">
+      {% endif %}
+      <br><br>
     </li>
   </ul>
   {% endfor %}

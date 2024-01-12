@@ -3,6 +3,7 @@
 body {
   font-family:Arial, Helvetica, sans-serif;
   padding: 100px;
+  cursor: default;
 }
 h1{
   text-align: center;
@@ -11,7 +12,7 @@ h1{
   position: absolute;
   top: 0; bottom: 0; left: 0; right: 0;
   max-width: 100vw;
-  height: 100px;
+  height: 80px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -42,6 +43,11 @@ h1{
 .navbar li{
   float: left;
 }
+.right li {
+  background-color: rgb(166, 192, 166);
+  border-radius: 30px;
+  margin: 10px;
+}
 main {
   display: flex;
   flex-direction: column;
@@ -56,7 +62,8 @@ main {
   flex-direction: column;
   align-items: left;
   justify-content: space-between;
-  border: 1px black solid;
+  box-shadow: 0px 0px 10px rgba(128, 128, 128, 0.76);
+  border-radius: 20px;
   padding: 50px;
   margin: 20px;
 }
@@ -77,10 +84,29 @@ main {
 /* show.html */
 
 #calendar {
-  width: 50vw;
+  width: 40vw;
   padding: 50px;
   border: 1px black solid;
 }
+.custom-button a {
+  text-decoration: none;
+  font-size: 12px;
+  color: black;
+}
+.enter-dates {
+  width: 40vw;
+}
+.custom-button{
+  margin: 40px;
+}
+.custom-button a{
+  cursor: pointer;
+  font-size: 16px;
+}
+.custom-button:hover {
+  text-decoration: underline;
+}
+
 
 /* add-listing.html */
 .content {
@@ -88,9 +114,11 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  border: 1px black solid;
+  border-radius: 20px;
   padding: 40px;
   margin: 20px;
+  background-color: rgb(192, 222, 192, 50%);
+  box-shadow: 0px 0px 10px rgba(128, 128, 128, 0.76);
 }
 .form-input {
   display: flex;
@@ -122,7 +150,15 @@ main {
   border: 1px solid black;
   padding: 10px 50px 10px 50px;
   margin-bottom: 50px;
+  background-color: white;
 }
+.confirmation-buttons {
+  margin-bottom: 50px;
+}
+button {
+  cursor: pointer;
+}
+
 
 
 /* signup.html */
