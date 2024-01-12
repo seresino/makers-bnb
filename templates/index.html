@@ -23,13 +23,15 @@
       <div class="entry">
         <div class="sub-entry-img">
           {% if listing.image_filename %}
+          <a href='/listings/{{listing.id}}'>
             <img src="{{ url_for('uploaded_file', filename=listing.image_filename) }}" alt="Listing Image" width="200">
+          </a>
           {% endif %}
         </div>
         <div class="sub-entry">
           <a href='/listings/{{listing.id}}'>{{ listing.name }}</a><br>
           {{ listing.address }}<br>
-          £{{ listing.price }}<br>
+          £{{ listing.price }} night<br>
         </div>
       </div>
   {% endfor %}

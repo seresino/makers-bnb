@@ -1,104 +1,112 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ listing.name }}</h1>
-    <p class="address">Address: {{ listing.address }}</p>
-    <p>Description: {{ listing.description }}</p>
-    <p>Price: £{{ listing.price }}</p>
-    
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
-    <br>
-    <br>
-    
-    <!-- Add a div element to contain the calendar -->
-    <div id="calendar"></div>
-    <br>
 
-    <!-- Include the FullCalendar library and initialize the calendar -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-                
-            // Initialize FullCalendar with the events data
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'Month',
-                // headerToolbar: { center: 'Month,SixMonth' },
-                views: {
-                    Month: { // name of view
-                    type: 'dayGridMonth',
-                    // other view-specific options here
-                    },
-                    SixMonth: {
-                    type: 'multiMonth',
-                    duration: { months: 6 }
-                    }
-                },
-                buttonText: {
-                    today:    'Today',
-                    month:    'Month'
-                },
-                selectable: true,
-                events: {{ availability_json | safe }},
-                eventDisplay: 'background'
-            });
-
-            calendar.render();
-        });
-    </script>
-
-    {% with messages = get_flashed_messages() %}
-     {% if messages %}
-        <ul class="flash-messages">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
-    
-    {% if logged_in_user != False %}
-
-        <div class="enter-dates">
-            {% if listing.id == logged_in_user.id %}
-                <form method='POST'>
-                    <br>
-                    <p>
-                        Add Availability
-                    </p>
-                    <label for="availability-start">Start date:</label>
-                    <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
-                    <br>
-                    <label for="availability-end">End date:</label>
-                    <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
-                    <p>
-                        <button>Submit Availability</button>
-                    </p>
-                </form>
+    <div class="show-listing">
+        <div class="property-info">
+            <h1>{{ listing.name }}</h1>
+            <div class="display-image">
+                <img src="{{ url_for('uploaded_file', filename=listing.image_filename) }}" alt="Listing Image" width="200">
+            </div>
+            <p class="address">Address: {{ listing.address }}</p>
+            <p>Description: {{ listing.description }}</p>
+            <p>Price: £{{ listing.price }}.00</p>
             
-            {% else %}
+            {% if message %}
+                <p>{{ message }}</p>
+            {% endif %}
 
-                <form method='POST'>
-                    <br>
-                    <p>
-                        Request to book
-                    </p>
-                    <label for="start">Start date:</label>
-                    <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
-                    <br>
-                    <label for="end">End date:</label>
-                    <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
-                    <p>
-                        <button>Submit Request</button>
-                    </p>
-                </form>
+            <div class="custom-button">
+                <a href='/'>Back to All Listings</a><br>
+            </div>
+        </div>
+        <div>
+            <!-- Add a div element to contain the calendar -->
+            <div id="calendar"></div>
+            <br>
+
+            <!-- Include the FullCalendar library and initialize the calendar -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                        
+                    // Initialize FullCalendar with the events data
+                    var calendarEl = document.getElementById('calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'Month',
+                        // headerToolbar: { center: 'Month,SixMonth' },
+                        views: {
+                            Month: { // name of view
+                            type: 'dayGridMonth',
+                            // other view-specific options here
+                            },
+                            SixMonth: {
+                            type: 'multiMonth',
+                            duration: { months: 6 }
+                            }
+                        },
+                        buttonText: {
+                            today:    'Today',
+                            month:    'Month'
+                        },
+                        events: {{ availability_json | safe }},
+                        eventDisplay: 'background'
+                    });
+
+                    calendar.render();
+                });
+            </script>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+
+            {% if logged_in_user != False %}
+
+                <div class="enter-dates">
+                    {% if listing.id == logged_in_user.id %}
+                        <form method='POST'>
+                            <br>
+                            <p>
+                                Add Availability
+                            </p>
+                            <label for="availability-start">Start date:</label>
+                            <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+                            <br>
+                            <label for="availability-end">End date:</label>
+                            <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+                            <p>
+                                <button>Submit Availability</button>
+                            </p>
+                        </form>
+                    
+                    {% else %}
+
+                        <form method='POST'>
+                            <br>
+                            <p>
+                                Request to book
+                            </p>
+                            <label for="start">Start date:</label>
+                            <input type="date" id="start" name="start-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+                            <br>
+                            <label for="end">End date:</label>
+                            <input type="date" id="end" name="end-date" value="2024-01-01" min="2024-01-01" max="2025-01-01" required />
+                            <p>
+                                <button>Submit Request</button>
+                            </p>
+                        </form>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
-    {% endif %}
-    <div class="custom-button">
-        <a href='/'>Back to All Listings</a><br>
     </div>
+
     
-        
+    
 {% endblock %}
