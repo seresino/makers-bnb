@@ -75,13 +75,13 @@ VALUES
     ('AmparoG', 'Amparo', 'Guevara', 'amparo@example.com', 'password1237', '07973661144');
 
 
-INSERT INTO listing (name, address, description, price, account_id)
+INSERT INTO listing (name, address, description, price, account_id, image_filename)
 VALUES
-    ('JohnD house', '145 JohnD lane, London', 'Two bedroom flat, next to the sea', 100, 1),
-    ('RubyS house', '12 Fairytale lane, London', 'Ten bedroom mansion', 300, 2),
-    ('RubyS cottage', '34 Cottage lane, Village', 'Beautiful cottage in the woods', 150, 2),
-    ('DanG', '22 High Street, London', 'Modern loft', 350, 3),
-    ('KatB', '12 Nowhere lane, Middletown', 'Quiet house in the wilderness', 350, 3);
+    ('Vibrant Seaside Apartment', '145 JohnD Lane, London', 'Two bedroom flat, next to the sea.', 100, 1, 'listing-1.jpg'),
+    ('Victorian Family House', '12 Fairytale Lane, London', 'Ten bedroom mansion', 300, 2, 'listing-2.jpg'),
+    ('Woodland Cottage', '34 Cottage Lane, Village', 'Located in the middle of the Sørland wilderness between two lakes far from people and roads. Treetop cabin with 4 floors - a real return to nature experience! Great level of comfort with great beds, panoramic views, and well-equipped kitchen.', 150, 2, 'listing-3.jpeg'),
+    ('Urban Apartment Loft', '22 High Street, London', 'Lovely studio apartment located in the famous Notting Hill Area in London.', 350, 3, 'listing-4.jpg'),
+    ('Quiet Secluded House', '12 Nowhere Lane, Middletown', 'We welcome you to come and stay in one of our newly renovated Airbnb rooms set within our beautiful converted barn in the Whicham Valley. A peaceful, picturesque location with rural open views of the Combes.', 350, 3, 'listing-5.jpg');
 
 INSERT INTO availability (listing_id, start_date, end_date, available)
 VALUES
