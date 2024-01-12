@@ -51,12 +51,12 @@ def send_request_sms(twilio_num, recipitent_num, message):
 send sms to requesting user when there request has been dealt with (approved, denied etc)
 """
 
-# def send_request_outcome_sms(twilio_num, recipitent_num, message):
-#     load_dotenv()
-#     client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
-#     message = client.messages.create(
-#         body = message,
-#         from_ = twilio_num,
-#         to = recipitent_num
-#     )
-#     return None
+def send_request_outcome_sms(twilio_num, recipitent_num, message):
+    load_dotenv()
+    client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
+    message = client.messages.create(
+        body = message,
+        from_ = twilio_num,
+        to = recipitent_num
+    )
+    return None
