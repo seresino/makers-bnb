@@ -23,9 +23,25 @@
             // Initialize FullCalendar with the events data
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+                initialView: 'Month',
+                // headerToolbar: { center: 'Month,SixMonth' },
+                views: {
+                    Month: { // name of view
+                    type: 'dayGridMonth',
+                    // other view-specific options here
+                    },
+                    SixMonth: {
+                    type: 'multiMonth',
+                    duration: { months: 6 }
+                    }
+                },
+                buttonText: {
+                    today:    'Today',
+                    month:    'Month'
+                },
                 selectable: true,
-                events: {{ availability_json | safe }}
+                events: {{ availability_json | safe }},
+                eventDisplay: 'background'
             });
 
             calendar.render();
