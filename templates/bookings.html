@@ -25,12 +25,13 @@
                             <p>Check In: {{ booking.start_date }}</p>
                             <p>Check Out: {{ booking.end_date }}</p>
                             <p>Status: {{ booking.status }}</p><br>
-
-                            {% if booking.status == 'Requested' %}
+                        </div>
+                        {% if booking.status == 'Requested' %}
+                            <div class="confirmation-buttons">
                                 <button type="submit" name="action" value="accept" class="accept">Approve</button>
                                 <button type="submit" name="action" value="deny" class="deny">Deny</button>
-                            {% endif %}
-                        </div>
+                            </div>
+                        {% endif %}
                     </form>
                 {% endfor %}
             </div>
