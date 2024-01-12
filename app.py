@@ -182,7 +182,7 @@ def get_listing(id):
                 'end': availability.end_date.isoformat(),      # Convert to ISO format
             })
     
-    # # Convert the list to a JSON object
+    # Convert the list to a JSON object
     availability_json = json.dumps(availability_data)
     
     if session.get('username') != None:
@@ -262,6 +262,7 @@ def handle_booking_action(listing_id, booking_id):
 
     if action == 'accept':
         booking.status = 'Confirmed'
+        remove_availability(booking)
     elif action == 'deny':
         booking.status = 'Denied'
 
