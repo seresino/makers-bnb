@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, redirect, session, url_for, flash, send_from_directory
+from flask import Flask, request, render_template, redirect, session, url_for, flash
 from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
@@ -13,23 +13,20 @@ from flask_bcrypt import Bcrypt
 from lib.booking import *
 from datetime import datetime
 from utils import *
-from werkzeug.utils import secure_filename
 from forms import *
 from twilio.rest import Client
+
+# Load environment variables
+load_dotenv()
 
 # Create a new Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a7sk21'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 bcrypt = Bcrypt(app)
-app.permanent_session_lifetime = timedelta(minutes=120)
-
-
+app.permanent_session_lifetime = timedelta(minutes=120) # Set the session lifetime
 
 # Environment variables
-load_dotenv()
-db_username = os.getenv('DB_USERNAME')
-print(db_username)
+db_username = os.getenv('DB_USERNAME') # Retrieve database username from environment variables
 
 # Create new database instance
 db = PostgresqlDatabase(
@@ -42,34 +39,26 @@ db = PostgresqlDatabase(
 # Initialize the database connection in the Flask app context
 @app.before_request
 def before_request():
-    db.connect()
+    db.connect() # Connect to the database before each request
 
 @app.after_request
 def after_request(response):
     db.close()
-    return response
-
+    return response # Close the database connection after each request
 
 
 # == Your Routes Here ==
 
-# GET /
-# Returns the homepage
-# Try it:
-#   ; open http://localhost:5000/
 @app.route('/', methods=['GET'])
 def get_index():
     listings = Listing.select()
     return render_template('index.html', account=session.get('username'), listings=listings)
 
-@app.route('/static/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/signup', methods=['GET'])
 def get_signup():
     if session.get('username') != None:
-        return redirect('/')
+        return redirect('/') # Redirect to homepage if already logged in
     else:
         form = SignupForm()
         error = None
@@ -109,18 +98,10 @@ def post_signup():
             # Handle the case where a unique constraint (username or email) is violated
             error = 'Username or email already exists'
             return render_template('signup.html', form=form, error=error)
-
     else:
         # Form is not valid, render the signup page with errors
         return render_template('signup.html', form=form)
 
-
-# @app.route('/login', methods=['GET'])
-# def get_login():
-#     if session.get('username') != None:
-#         return redirect('/')
-#     else:
-#         return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -147,11 +128,13 @@ def login():
             return redirect('/')
     return render_template('login.html', form=form, error_message=error_message)
 
+
 @app.route('/logout', methods=['GET'])
 def logout():
     # Clear the user_id from the session
     session.pop('username', None)
     return redirect('/')
+
 
 @app.route('/add-space', methods=['GET', 'POST'])
 def add_space():
@@ -161,30 +144,17 @@ def add_space():
     else:
         
         if form.validate_on_submit():
+            # Form is valid, proceed with creating the listing
             name = form.name.data
             address = form.address.data
             description = form.description.data
             price = form.price.data
-            image = form.image.data
-            filename = secure_filename(image.filename)
-            upload_directory = '/static/uploads'
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             person = Account.get(Account.username==session.get('username'))
-            listing = Listing(name=name, address=address, description=description, price=price, account=person, image_filename=filename)
-
-            # if 'image' in request.files:
-            #     image = request.files['image']
-            # if image.filename != '':
-            #         filename = secure_filename(image.filename)
-            #         image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            #         listing.image_filename = filename
-
+            listing = Listing(name=name, address=address, description=description, price=price, account=person)
             listing.save()
             return redirect(f"/listings/{listing.id}")
     return render_template('add_listing.html', account=session.get('username'), form=form)
-
-
 
 
 @app.route('/listings/<int:id>', methods=['GET', 'POST'])
@@ -193,8 +163,9 @@ def get_listing(id):
 
     individual_listing = Listing.get(Listing.id == id)
     listing_owner = Account.get(Account.id == individual_listing.account_id)
-    
     availabilities = Availability.select().where(Availability.listing_id == individual_listing.id)
+
+    # Prepare availability data for rendering on the frontend
     availability_data = []
     for availability in availabilities:
         if availability.available == True:
@@ -210,14 +181,16 @@ def get_listing(id):
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
         
+        # Process POST request for updating availability or making a booking
         if request.method == 'POST':
             start_date = request.form['start-date']
             end_date = request.form['end-date']
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
 
+            # Check if the logged-in user is the owner of the listing
             if logged_in_user.id == individual_listing.account_id:
-
+                # Update availability if there are no overlaps
                 if not check_availability_overlap(availabilities, start_date, end_date):
                     new_availability = Availability.create(
                     listing_id=individual_listing,
@@ -225,17 +198,13 @@ def get_listing(id):
                     end_date = end_date,
                     available=True
                 )
-
                     new_availability.save()
                     flash("Availability updated", 'sucess')
-        
                 else:
                     flash("Overlaps with existing availability", 'error')
-
-
             else:
+                # Request a booking if the property is available for the given dates
                 if check_requested_booking_availability(availabilities, start_date, end_date):
-
                     new_booking_request = Booking.create(
                         listing_id = individual_listing,
                         account_id = logged_in_user,
@@ -246,6 +215,7 @@ def get_listing(id):
                     new_booking_request.save()
                     flash("Booking requested", 'success')
                     
+                    # Notify the listing owner about the booking request via SMS
                     message = f"Hello {listing_owner.first_name}, Your property {individual_listing.name} has been requested from {start_date} to {end_date}. Please login to your account to manage this request. Thanks MakersBnB"
                     send_request_sms(os.getenv('TWILIO_PHONE_NUMBER'), '447590395227', message)
                 else:
@@ -254,7 +224,6 @@ def get_listing(id):
             return redirect(url_for('get_listing', id=id))
     
     return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
-
 
 
 @app.route('/listings/<int:listing_id>/bookings/<int:booking_id>', methods=['POST'])
@@ -275,6 +244,7 @@ def handle_booking_action(listing_id, booking_id):
     # Update the status of the booking based on the action
     action = request.form.get('action')
 
+    # If booking is accepted, change booking status to accpeted and remove booked dates from availability
     if action == 'accept':
         booking.status = 'Confirmed'
         remove_availability(booking)
@@ -287,7 +257,6 @@ def handle_booking_action(listing_id, booking_id):
     return redirect(url_for('get_listing', id=listing_id))
 
 
-
 @app.route('/bookings', methods=['GET'])
 def get_bookings():
     if session.get('username') == None:
@@ -297,21 +266,26 @@ def get_bookings():
         listings = Listing.select().where(Listing.account_id==person.id)
 
         received = Booking.select().where(Booking.listing_id << [listing.id for listing in listings])
+
+        # Create a dictionary mapping listing IDs to their names for received bookings
         received_names = {booking.listing_id: listing.name for booking, listing in zip(received, listings)}
 
         requested = Booking.select().where(Booking.account_id == person.id)
-        other_listings = []
-        for booking in requested:
-            other_listings.append(Listing.get(Listing.id == booking.listing_id))
+
+        # Retrieve associated listings for booking requests made by the user
+        other_listings = [Listing.get(Listing.id == booking.listing_id) for booking in requested]
+
+        # Create a dictionary mapping listing IDs to their names for requested bookings
         requested_names = {booking.listing_id: listing.name for booking, listing in zip(requested, other_listings)}
 
         return render_template('bookings.html', account=session.get('username'), received=received, received_names=received_names, requested=requested, requested_names=requested_names)
 
-# These lines start the server if you run this file directly
-# They also start the server configured to use the test database
-# if started in test mode.
+
 if __name__ == '__main__':
+    # Check if required environment variables are present
+    required_env_vars = ['DB_USERNAME', 'TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_PHONE_NUMBER']
+    for var in required_env_vars:
+        if os.getenv(var) is None:
+            raise EnvironmentError(f"Environment variable {var} is not set.")
+
     app.run(debug=True, port=int(os.environ.get('PORT', 5000)))
-
-
-    

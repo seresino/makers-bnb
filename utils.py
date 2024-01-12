@@ -6,7 +6,7 @@ from lib.booking import *
 from lib.availability import *
 
 """
-check that new availability does not overlap with any existing available date ranges for that listing
+Check that new availability does not overlap with any existing available date ranges for that listing
 """
 
 def check_availability_overlap(availabilities, new_start_date, new_end_date):
@@ -23,7 +23,7 @@ def check_availability_overlap(availabilities, new_start_date, new_end_date):
     return False
 
 """
-check if requested booking falls within one of the available date ranges for that listing
+Check if requested booking falls within one of the available date ranges for that listing
 """
 
 def check_requested_booking_availability(availabilities, requested_start_date, requested_end_date):
@@ -37,7 +37,7 @@ def check_requested_booking_availability(availabilities, requested_start_date, r
     return False
 
 """
-send sms to owner of a listing when there property has been requested
+Send sms to owner of a listing when there property has been requested
 """
 
 def send_request_sms(twilio_num, recipitent_num, message):
@@ -51,7 +51,7 @@ def send_request_sms(twilio_num, recipitent_num, message):
     return None
 
 """
-send sms to requesting user when there request has been dealt with (approved, denied etc)
+Send sms to requesting user when there request has been dealt with (approved, denied etc)
 """
 
 def send_request_outcome_sms(twilio_num, recipitent_num, message):
@@ -65,7 +65,7 @@ def send_request_outcome_sms(twilio_num, recipitent_num, message):
     return None
 
 """
-if a booking status is accepted, remove the dates of the booking from the availability table
+If a booking status is accepted, remove the dates of the booking from the availability table
 """
 
 def remove_availability(booking):
@@ -94,6 +94,10 @@ def remove_availability(booking):
                 )
 
         availability.delete_instance()
+
+"""
+Split a list of dates into consecutive lists based on a gap threshold.
+"""
 
 def split_dates_on_gap(date_list, gap_threshold=timedelta(days=1)):
     consecutive_lists = []
