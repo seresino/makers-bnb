@@ -6,9 +6,6 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
-from flask_wtf import FlaskForm
-from wtforms import Form, StringField, PasswordField, SubmitField, validators, IntegerField
-from wtforms.validators import Regexp, ValidationError, InputRequired, Email
 from sqlalchemy.exc import IntegrityError
 from lib.availability import *
 import json
@@ -16,6 +13,7 @@ from flask_bcrypt import Bcrypt
 from lib.booking import *
 from datetime import datetime
 from utils import *
+from forms import *
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -35,27 +33,6 @@ db = PostgresqlDatabase(
     password='',  # Your PostgreSQL password
     host='localhost'  # Your PostgreSQL host
 )
-
-class SignupForm(FlaskForm):
-    username = StringField('Username', [InputRequired()])
-    firstname = StringField('First Name', [InputRequired()])
-    lastname = StringField('Last Name', [InputRequired(message='Last name cannot be blank.')])
-    email = StringField('Email', [InputRequired(), Email(message='Invalid email address.')])
-    phone = StringField('Phone', [InputRequired(), Regexp(r'^\d{11}$', message='Phone number must be 11 digits')])
-    password = PasswordField('Password', [InputRequired()])
-    submit = SubmitField("Sign Up")
-
-class LoginForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired()])
-    password = PasswordField('password', validators=[InputRequired()])
-    submit = SubmitField("Login")
-
-class AddListingForm(FlaskForm):
-    name = StringField('Name', [InputRequired()])
-    address = StringField('Address', [InputRequired()])
-    description = StringField('Description', [InputRequired()])
-    price = StringField('Price', [InputRequired()]) 
-    submit = SubmitField("Add Space")
 
 # Initialize the database connection in the Flask app context
 @app.before_request
@@ -173,6 +150,7 @@ def add_space():
     if session.get('username') == None:
         return redirect('/login')
     else:
+        
         if form.validate_on_submit():
             name = form.name.data
             address = form.address.data
@@ -190,6 +168,7 @@ def add_space():
 
 @app.route('/listings/<int:id>', methods=['GET', 'POST'])
 def get_listing(id):
+    logged_in_user=False
 
     individual_listing = Listing.get(Listing.id == id)
     
@@ -208,8 +187,7 @@ def get_listing(id):
     
     if session.get('username') != None:
         logged_in_user = Account.get(Account.username == session.get('username'))
-    else:
-        logged_in_user = False
+        
         if request.method == 'POST':
             start_date = request.form['start-date']
             end_date = request.form['end-date']
@@ -230,24 +208,27 @@ def get_listing(id):
                     flash("Availability updated", 'sucess')
         
                 else:
-                    flash("Overlaps with existing availability, Try again", 'error')
+                    flash("Overlaps with existing availability", 'error')
 
 
             else:
-                new_booking_request = Booking.create(
-                    listing_id = individual_listing,
-                    account_id = logged_in_user,
-                    start_date = start_date,
-                    end_date = end_date,
-                    status = 'requested'
-                )
-                new_booking_request.save()
-                flash("Booking requested", 'success')
+                if check_requested_booking_availability(availabilities, start_date, end_date):
 
+                    new_booking_request = Booking.create(
+                        listing_id = individual_listing,
+                        account_id = logged_in_user,
+                        start_date = start_date,
+                        end_date = end_date,
+                        status = 'requested'
+                    )
+                    new_booking_request.save()
+                    flash("Booking requested", 'success')
+                else:
+                    flash("Property not avilable for given dates", 'error')
 
             return redirect(url_for('get_listing', id=id))
-        else:
-            return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
+    
+    return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
 
         # # Check if there are pending booking requests for this listing
         # pending_requests = Booking.select().where(
@@ -259,19 +240,6 @@ def get_listing(id):
         #                     account=session.get('username'), availabilities=availabilities,
         #                     pending_requests=pending_requests)
 
-    availability_data = []
-    for availability in availabilities:
-        if availability.available == True:
-            availability_data.append({
-                'title': 'Available',
-                'start': availability.start_date.isoformat(),  # Convert to ISO format
-                'end': availability.end_date.isoformat(),      # Convert to ISO format
-            })
-    
-    # # Convert the list to a JSON object
-    availability_json = json.dumps(availability_data)
-
-    return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user, account=session.get('username'), availability_json=availability_json)
 
 
 
