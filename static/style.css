@@ -60,25 +60,63 @@ main {
 .listings {
   display: flex;
   flex-direction: column;
-  align-items: left;
-  justify-content: space-between;
   box-shadow: 0px 0px 10px rgba(128, 128, 128, 0.76);
   border-radius: 20px;
   padding: 50px;
   margin: 20px;
+  width: 40vw;
 }
-.listing li {
-  list-style: none;
-  padding-right: 600px;
-}
-.listing a {
+.listings a {
   text-decoration: none;
-  font-size: 20px;
-  line-height: 40px;
+  font-size: 18px;
+  line-height: 20px;
   color: black;
 }
-.listing a:hover {
-  text-decoration: underline;
+.listings a:hover {
+  color: rgb(166, 192, 166);
+  font-weight: bold;
+}
+.entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  margin: 15px 0 15px 0;
+}
+.sub-entry {
+  width: 180px;
+  height: 80px; 
+  position: relative;
+  overflow: hidden; 
+  border-radius : 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  padding: 5px 10px 5px 20px;
+}
+.sub-entry-img {
+  width: 200px;
+  height: 140px; 
+  position: relative;
+  overflow: hidden; 
+  border-radius : 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  padding: 5px 10px 5px 20px;
+  border: 3px solid rgb(166, 192, 166);
+}
+.entry img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* show.html */
