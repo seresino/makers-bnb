@@ -14,6 +14,7 @@ class Listing(Model):
     description = CharField()
     price = CharField()
     account = ForeignKeyField(Account, backref='listings')
+    image_filename = CharField() 
     
 
     class Meta:

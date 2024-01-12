@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import Form, StringField, PasswordField, SubmitField, validators, IntegerField
+from wtforms import Form, StringField, PasswordField, SubmitField, validators, IntegerField, FileField
 from wtforms.validators import Regexp, ValidationError, InputRequired, Email
 
 class SignupForm(FlaskForm):
@@ -21,4 +21,5 @@ class AddListingForm(FlaskForm):
     address = StringField('Address', [InputRequired()])
     description = StringField('Description', [InputRequired()])
     price = IntegerField('Price', [InputRequired()]) 
+    image = FileField('Image') 
     submit = SubmitField("Add Space")

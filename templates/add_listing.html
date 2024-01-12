@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %} 
-  <form method="POST", action="">
+  <form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <div class="content">
       <div>
@@ -25,7 +25,15 @@
           <p class="label">Price / Night</p>
           <p class="input-box">{{ form.price(id='priceField') }}</p>
         </div>
-      </div>
+        <div class="form-input">
+          <p class="label">Image</p>
+          <p class="input-box">{{ form.image(id='imageField') }}</p>
+        </div>
+        <!-- <div class="form-input">
+          <p class="label">Upload Image</p>
+          <input type="file" name="image" id="image" accept="image/*">
+        </div>
+      </div> -->
       <div class="button">
         {{ form.submit(id='submitField') }}
       </div>

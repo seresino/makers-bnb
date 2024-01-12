@@ -37,6 +37,7 @@ CREATE TABLE listing (
     description VARCHAR(255),
     price INT NOT NULL,
     account_id INT,
+    image_filename VARCHAR(255),
     CONSTRAINT fk_account FOREIGN KEY(account_id) REFERENCES account(id) ON DELETE CASCADE
 );
 

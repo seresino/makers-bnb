@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, redirect, session, url_for, flash
+from flask import Flask, request, render_template, redirect, session, url_for, flash, send_from_directory
 from lib.database_connection import get_flask_database_connection
 from dotenv import load_dotenv
 from peewee import *
@@ -13,11 +13,13 @@ from flask_bcrypt import Bcrypt
 from lib.booking import *
 from datetime import datetime
 from utils import *
+from werkzeug.utils import secure_filename
 from forms import *
 
 # Create a new Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a7sk21'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 bcrypt = Bcrypt(app)
 app.permanent_session_lifetime = timedelta(minutes=120)
 
@@ -56,6 +58,10 @@ def after_request(response):
 def get_index():
     listings = Listing.select()
     return render_template('index.html', account=session.get('username'), listings=listings)
+
+@app.route('/static/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/signup', methods=['GET'])
 def get_signup():
@@ -156,9 +162,21 @@ def add_space():
             address = form.address.data
             description = form.description.data
             price = form.price.data
+            image = form.image.data
+            filename = secure_filename(image.filename)
+            upload_directory = '/static/uploads'
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             person = Account.get(Account.username==session.get('username'))
-            listing = Listing(name=name, address=address, description=description, price=price, account=person)
+            listing = Listing(name=name, address=address, description=description, price=price, account=person, image_filename=filename)
+
+            # if 'image' in request.files:
+            #     image = request.files['image']
+            # if image.filename != '':
+            #         filename = secure_filename(image.filename)
+            #         image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #         listing.image_filename = filename
+
             listing.save()
             return redirect(f"/listings/{listing.id}")
     return render_template('add_listing.html', account=session.get('username'), form=form)
@@ -229,17 +247,6 @@ def get_listing(id):
             return redirect(url_for('get_listing', id=id))
     
     return render_template('show.html', listing=individual_listing, logged_in_user = logged_in_user, account=session.get('username'), availability_json=availability_json)
-
-        # # Check if there are pending booking requests for this listing
-        # pending_requests = Booking.select().where(
-        #     (Booking.listing_id == individual_listing.id) &
-        #     (Booking.status == 'Requested')
-        # )
-
-        # return render_template('show.html', listing=individual_listing, logged_in_user=logged_in_user,
-        #                     account=session.get('username'), availabilities=availabilities,
-        #                     pending_requests=pending_requests)
-
 
 
 
