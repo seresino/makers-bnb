@@ -6,7 +6,7 @@ from peewee import *
 from lib.account import *
 from datetime import timedelta
 from lib.listing import *
-from sqlalchemy.exc import IntegrityError
+from peewee import IntegrityError
 from lib.availability import *
 import json
 from flask_bcrypt import Bcrypt
@@ -98,6 +98,7 @@ def post_signup():
                 phone_number=phone,
                 password=hashed_password
             )
+            account.save()
 
             session.permanent = True
             session['username'] = account.username
@@ -107,8 +108,8 @@ def post_signup():
 
         except IntegrityError:
             # Handle the case where a unique constraint (username or email) is violated
-            error = 'Username or email already exists'
-            return render_template('signup.html', form=form, error=error)
+            flash("username or email already exists.", 'error')
+            return render_template('signup.html', form=form)
 
     else:
         # Form is not valid, render the signup page with errors

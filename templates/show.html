@@ -25,6 +25,7 @@
             <div id="calendar"></div>
             <br>
 
+
             <!-- Include the FullCalendar library and initialize the calendar -->
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -51,6 +52,19 @@
                         events: {{ availability_json | safe }},
                         eventDisplay: 'background'
                     });
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    
+    {% if logged_in_user != False %}
+
 
                     calendar.render();
                 });
