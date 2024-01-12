@@ -22,6 +22,13 @@ h1{
 .home {
   font-weight:bold;
   font-size: 30px;
+  border-radius:100px;
+  border-color: black;
+  border-width: 2.5px;
+  border-style: solid;
+  padding: 0.5px;
+  text-align:center;
+  background-color:rgb(192, 222, 192, 100%);
 }
 .navbar ul{
   list-style-type: none;
